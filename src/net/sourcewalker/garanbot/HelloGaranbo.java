@@ -20,6 +20,10 @@ public class HelloGaranbo extends Activity {
 
         GaranboClient client = new GaranboClient(USER, PASS);
 
-        view.setText(client.item().list().toString());
+        try {
+            view.setText(client.item().list().toString());
+        } catch (ClientException e) {
+            Log.e("HelloGaranbo", e.getMessage());
+        }
     }
 }
