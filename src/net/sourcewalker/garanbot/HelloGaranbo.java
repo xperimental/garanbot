@@ -1,5 +1,6 @@
 package net.sourcewalker.garanbot;
 
+import net.sourcewalker.garanbot.api.ClientException;
 import net.sourcewalker.garanbot.api.GaranboClient;
 import android.app.Activity;
 import android.os.Bundle;
@@ -21,7 +22,7 @@ public class HelloGaranbo extends Activity {
         GaranboClient client = new GaranboClient(USER, PASS);
 
         try {
-            view.setText(client.item().list().toString());
+            view.setText(client.item().get(410).toString());
         } catch (ClientException e) {
             Log.e("HelloGaranbo", e.getMessage());
         }

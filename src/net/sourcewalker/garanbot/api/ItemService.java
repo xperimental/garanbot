@@ -47,8 +47,21 @@ public class ItemService {
         return result;
     }
 
-    public Item get(int id) {
-        return null;
+    public Item get(int id) throws ClientException {
+        try {
+            HttpResponse response = client.get("/item/" + id);
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                String content = client.readEntity(response);
+                return Item.fromJSON(content);
+            } else {
+                throw new ClientException("Got HTTP error: "
+                        + response.getStatusLine().toString());
+            }
+        } catch (IOException e) {
+            throw new ClientException("IO error: " + e.getMessage(), e);
+        } catch (NumberFormatException e) {
+            throw new ClientException("Error parsing id: " + e.getMessage(), e);
+        }
     }
 
 }
