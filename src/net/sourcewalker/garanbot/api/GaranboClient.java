@@ -61,9 +61,8 @@ public class GaranboClient {
     }
 
     private String getAuthHeader() {
-        byte[] input = EncodingUtils.getBytes(username + ":" + password,
-                "utf-8");
-        return Base64.encodeToString(input, Base64.DEFAULT);
+        byte[] input = String.format("%s:%s", username, password).getBytes();
+        return "Basic " + Base64.encodeToString(input, Base64.NO_WRAP);
     }
 
     public String readEntity(HttpResponse response) {
@@ -75,7 +74,12 @@ public class GaranboClient {
             do {
                 read = stream.read(buffer);
                 if (read != -1) {
-                    sb.append(EncodingUtils.getString(buffer, "utf-8"));
+                    if (read == buffer.length) {
+                        sb.append(EncodingUtils.getString(buffer, "utf-8"));
+                    } else {
+                        sb.append(EncodingUtils.getString(buffer, 0, read,
+                                "utf-8"));
+                    }
                 }
             } while (read != -1);
         } catch (IOException e) {
