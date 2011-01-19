@@ -17,6 +17,7 @@ public class GaranboClient {
     private final String password;
     private final DefaultHttpClient client;
     private final UserService userService;
+    private final ItemService itemService;
 
     public GaranboClient(String username, String password) {
         this.username = username;
@@ -25,6 +26,7 @@ public class GaranboClient {
         client = new DefaultHttpClient();
 
         userService = new UserService();
+        itemService = new ItemService(this);
     }
 
     /**
@@ -45,6 +47,10 @@ public class GaranboClient {
 
     public UserService user() {
         return userService;
+    }
+
+    public ItemService item() {
+        return itemService;
     }
 
     protected HttpResponse get(String path) throws IOException {
