@@ -38,6 +38,7 @@
                 android:name="android.accounts.AccountAuthenticator"
                 android:resource="@xml/authenticator" />
         </service>
+        <activity android:name=".GaranbotItems" android:label="@string/items_name"/>
     </application>
     <uses-sdk
         android:minSdkVersion="8" />

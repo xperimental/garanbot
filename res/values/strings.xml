@@ -18,4 +18,6 @@
     <string name="toast_loginerror">Wrong username/password!</string>
     <string name="toast_loginfailed">Login failed! Check your credentials and try again...</string>
     <string name="toast_needaccount">Please create an account to use this application.</string>
+    <string name="menuItems">Items</string>    
+    <string name="items_name">Items</string>    
 </resources>
