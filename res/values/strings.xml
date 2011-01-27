@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="hello">Hello World, HelloGaranbo!</string>
     <string name="app_name">Garanbot</string>
+    <string name="input_user">Username:</string>
+    <string name="input_password">Password:</string>
+    <string name="input_login">Login</string>
+    <string name="toast_loginerror">Wrong username/password!</string>
+    <string name="menu_add">Add item</string>
+    <string name="menu_settings">Settings</string>
 </resources>
