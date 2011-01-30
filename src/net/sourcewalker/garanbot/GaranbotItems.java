@@ -1,6 +1,7 @@
 package net.sourcewalker.garanbot;
 
 import net.sourcewalker.garanbot.data.GaranbotDBHelper;
+import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
 import android.app.ListActivity;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -17,14 +18,15 @@ public class GaranbotItems extends ListActivity {
         dbHelper = new GaranbotDBHelper(this);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         // insert two entries in table
-        db.execSQL("INSERT INTO " + GaranbotDBHelper.TABLE_NAME + " (name) "
-                + "VALUES ('firstItem')");
-        db.execSQL("INSERT INTO " + GaranbotDBHelper.TABLE_NAME + " (name) "
-                + "VALUES ('secondItem')");
+        db
+                .execSQL("INSERT INTO "
+                        + GaranbotDBMetaData.TABLE_NAME
+                        + " (name,manufacturer,itemtype,vendor,location,notes,haspicture,purchasedate,endofwarranty) "
+                        + "VALUES ('firstItem','matchbox','toy','schinacher','fn','green car', 0,'2002-12-24','2004-12-24')");
 
         // query entries for display in list view
-        Cursor c = db.query(GaranbotDBHelper.TABLE_NAME, new String[] { "_id",
-                "name" }, null, null, null, null, null);
+        Cursor c = db.query(GaranbotDBMetaData.TABLE_NAME, new String[] {
+                "_id", "name" }, null, null, null, null, null);
         startManagingCursor(c);
 
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
@@ -35,5 +37,4 @@ public class GaranbotItems extends ListActivity {
         this.setListAdapter(adapter);
 
     }
-
 }
