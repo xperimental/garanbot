@@ -9,14 +9,18 @@ import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
+import net.sourcewalker.garanbot.data.GaranboItemsProvider;
+import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
+import android.widget.SimpleCursorAdapter;
 
 /**
  * This activity displays the contents of the local database. The local database
@@ -32,6 +36,7 @@ public class ItemListActivity extends ListActivity {
 
     private String accountType;
     private AccountManager accountManager;
+    private final String[] projection = new String[] { "_id", "name" };
 
     /*
      * (non-Javadoc)
@@ -47,25 +52,14 @@ public class ItemListActivity extends ListActivity {
         if (accounts.length == 0) {
             startCreateAccount();
         }
-
-        // TODO Get items from database
-        Item[] dummyItems = new Item[3];
-        Item item1 = new Item(1);
-        item1.setName("tolles Teil1");
-        item1.setManufacturer("hersteller");
-        dummyItems[0] = item1;
-
-        Item item2 = new Item(2);
-        item2.setName("tolles Teil2");
-        item2.setManufacturer("hersteller2");
-        dummyItems[1] = item2;
-
-        Item item3 = new Item(3);
-        item3.setName("tolles Teil3");
-        item3.setManufacturer("hersteller3");
-        dummyItems[2] = item3;
-
-        setListAdapter(new ItemsAdapter(this, dummyItems));
+        // query content provider to receive all garanbo items
+        Cursor cursor = managedQuery(GaranboItemsProvider.CONTENT_URI,
+                projection, null, null, GaranbotDBMetaData.DEFAULT_SORT_ORDER);
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
+                android.R.layout.two_line_list_item, cursor, new String[] {
+                        "_id", "name" }, new int[] { android.R.id.text1,
+                        android.R.id.text2 });
+        setListAdapter(adapter);
     }
 
     /**

@@ -39,6 +39,10 @@
                 android:resource="@xml/authenticator" />
         </service>
         <activity android:name=".GaranbotItems" android:label="@string/items_name"/>
+        <provider
+            android:name="net.sourcewalker.garanbot.data.GaranboItemsProvider"
+            android:authorities="net.sourcewalker.garanbot">
+        </provider>
     </application>
     <uses-sdk
         android:minSdkVersion="8" />

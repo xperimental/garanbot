@@ -18,6 +18,13 @@ public class GaranbotDBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(GaranbotDBMetaData.SCHEMA);
+
+        // create dummy entry
+        db
+                .execSQL("INSERT INTO "
+                        + GaranbotDBMetaData.TABLE_NAME
+                        + " (name,manufacturer,itemtype,vendor,location,notes,haspicture,purchasedate,endofwarranty) "
+                        + "VALUES ('dummyEntry','matchbox','toy','schinacher','fn','green car', 0,'2002-12-24','2004-12-24')");
     }
 
     @Override
