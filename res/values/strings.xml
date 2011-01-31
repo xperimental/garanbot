@@ -29,4 +29,5 @@
     <string name="input_item_purchasedate">Purchase Date:</string>
     <string name="apply_create_item">OK</string>
     <string name="cancel_create_item">Cancel</string>
+    <string name="input_purch_date">Set purchase date.</string>
 </resources>
