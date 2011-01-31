@@ -20,4 +20,13 @@
     <string name="toast_needaccount">Please create an account to use this application.</string>
     <string name="menuItems">Items</string>    
     <string name="items_name">Items</string>    
+    <string name="input_item_name">Name:</string>
+    <string name="input_item_manufacturer">Manufacturer:</string>
+    <string name="input_item_itemtype">Type:</string>
+    <string name="input_item_vendor">Vendor:</string>
+    <string name="input_item_location">Location:</string>
+    <string name="input_item_notes">Notes:</string>
+    <string name="input_item_purchasedate">Purchase Date:</string>
+    <string name="apply_create_item">OK</string>
+    <string name="cancel_create_item">Cancel</string>
 </resources>
