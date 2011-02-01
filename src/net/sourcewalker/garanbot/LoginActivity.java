@@ -40,11 +40,10 @@ public class LoginActivity extends Activity {
          * (non-Javadoc)
          * @see android.view.View.OnClickListener#onClick(android.view.View)
          */
-        @Override
-        public void onClick(View v) {
-            // TODO Implement credential check
-            startActivity(new Intent(LoginActivity.this, ItemListActivity.class));
-        }
+		public void onClick(View v) {
+			// TODO Auto-generated method stub
+			startActivity(new Intent(LoginActivity.this, ItemListActivity.class));
+		}
 
     }
 

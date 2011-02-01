@@ -32,11 +32,23 @@ public class ItemListActivity extends ListActivity {
 
         // TODO Get items from database
         Item[] dummyItems = new Item[3];
-        dummyItems[0] = new Item(1);
-        dummyItems[1] = new Item(2);
-        dummyItems[2] = new Item(3);
-        setListAdapter(new ArrayAdapter<Item>(this,
-                android.R.layout.simple_list_item_1, dummyItems));
+        Item item1 = new Item(1);
+        item1.setName("tolles Teil1");
+        item1.setManufacturer("hersteller");
+        dummyItems[0] = item1;
+        
+        Item item2 = new Item(2);
+        item2.setName("tolles Teil2");
+        item2.setManufacturer("hersteller2");
+        dummyItems[1] = item2;
+        
+        
+        Item item3 = new Item(3);
+        item3.setName("tolles Teil3");
+        item3.setManufacturer("hersteller3");
+        dummyItems[2] = item3;
+        
+        setListAdapter(new ItemsAdapter(this, dummyItems));
     }
 
     /*
