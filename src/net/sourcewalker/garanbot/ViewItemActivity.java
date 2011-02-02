@@ -1,6 +1,7 @@
 package net.sourcewalker.garanbot;
 
 import android.app.Activity;
+import android.os.Bundle;
 
 /**
  * This activity should display one item from the database in a read-only
@@ -10,5 +11,16 @@ import android.app.Activity;
  * @author Xperimental
  */
 public class ViewItemActivity extends Activity {
+	
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onCreate(android.os.Bundle)
+     */
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.item_view);
+
+    }
 
 }
