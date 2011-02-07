@@ -7,4 +7,9 @@
     <string name="toast_loginerror">Wrong username/password!</string>
     <string name="menu_add">Add item</string>
     <string name="menu_settings">Settings</string>
+    <string name="prefs_username_key">login.username</string>
+    <string name="prefs_username_default"></string>
+    <string name="prefs_password_key">login.password</string>
+    <string name="prefs_password_default"></string>
+    <string name="toast_loginfailed">Login failed! Check your credentials and try again...</string>
 </resources>
