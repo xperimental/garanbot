@@ -27,7 +27,7 @@ public class GaranboClient {
 
         client = new DefaultHttpClient();
 
-        userService = new UserService();
+        userService = new UserService(this);
         itemService = new ItemService(this);
     }
 

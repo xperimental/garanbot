@@ -2,6 +2,7 @@ package net.sourcewalker.garanbot;
 
 import net.sourcewalker.garanbot.api.ClientException;
 import net.sourcewalker.garanbot.api.GaranboClient;
+import net.sourcewalker.garanbot.api.User;
 import net.sourcewalker.garanbot.data.Prefs;
 import android.accounts.AccountManager;
 import android.app.Activity;
@@ -103,8 +104,8 @@ public class LoginActivity extends Activity {
             GaranboClient client = new GaranboClient(username, password);
             Boolean result = false;
             try {
-                client.item().list();
-                result = true;
+                User serverUser = client.user().get();
+                result = username.equalsIgnoreCase(serverUser.getUsername());
             } catch (ClientException e) {
                 // Any exception causes login to fail.
             }
