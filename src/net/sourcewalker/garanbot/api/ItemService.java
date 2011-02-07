@@ -1,6 +1,7 @@
 package net.sourcewalker.garanbot.api;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -10,6 +11,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 
 public class ItemService {
 
@@ -61,6 +65,38 @@ public class ItemService {
             throw new ClientException("IO error: " + e.getMessage(), e);
         } catch (NumberFormatException e) {
             throw new ClientException("Error parsing id: " + e.getMessage(), e);
+        }
+    }
+
+    public Bitmap getPicture(int id) throws ClientException {
+        try {
+            HttpResponse response = client.get("/item/" + id + "/picture");
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                InputStream content = response.getEntity().getContent();
+                Bitmap result = BitmapFactory.decodeStream(content);
+                if (result != null) {
+                    return result;
+                } else {
+                    throw new ClientException("Picture could not be decoded!");
+                }
+            } else {
+                throw new ClientException("Got HTTP error: "
+                        + response.getStatusLine().toString());
+            }
+        } catch (IOException e) {
+            throw new ClientException("IO error: " + e.getMessage(), e);
+        }
+    }
+
+    public void delete(int id) throws ClientException {
+        try {
+            HttpResponse response = client.delete("/item/" + id);
+            if (!(response.getStatusLine().getStatusCode() == HttpStatus.SC_NO_CONTENT)) {
+                throw new ClientException("Got HTTP error: "
+                        + response.getStatusLine().toString());
+            }
+        } catch (IOException e) {
+            throw new ClientException("IO error: " + e.getMessage(), e);
         }
     }
 

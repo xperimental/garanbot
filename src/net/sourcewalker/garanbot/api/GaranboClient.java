@@ -5,7 +5,9 @@ import java.io.InputStream;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EncodingUtils;
 
@@ -59,7 +61,7 @@ public class GaranboClient {
         return client.execute(request);
     }
 
-    private void prepareRequest(HttpGet request) {
+    private void prepareRequest(HttpRequestBase request) {
         request.addHeader("Content-type", "application/json");
         request.addHeader("Accept", "application/json");
         request.addHeader("open-api", ApiConstants.KEY);
@@ -71,7 +73,7 @@ public class GaranboClient {
         return "Basic " + Base64.encodeToString(input, Base64.NO_WRAP);
     }
 
-    public String readEntity(HttpResponse response) {
+    protected String readEntity(HttpResponse response) {
         StringBuilder sb = new StringBuilder();
         try {
             InputStream stream = response.getEntity().getContent();
@@ -92,6 +94,21 @@ public class GaranboClient {
             sb.append("ERROR: " + e.getMessage());
         }
         return sb.toString();
+    }
+
+    /**
+     * Delete a server entity.
+     * 
+     * @param path
+     *            URL of entity relative to base URL.
+     * @return HTTP Response returned by server.
+     * @throws IOException
+     *             When there was an error communicating with the server.
+     */
+    protected HttpResponse delete(String path) throws IOException {
+        HttpDelete request = new HttpDelete(ApiConstants.BASE + path);
+        prepareRequest(request);
+        return client.execute(request);
     }
 
 }
