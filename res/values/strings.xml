@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="account_activity_label">Login to Garanbo</string>
     <string name="account_label">Garanbot</string>
     <string name="account_type">net.sourcewalker.garanbot.account</string>
     <string name="app_name">Garanbot</string>

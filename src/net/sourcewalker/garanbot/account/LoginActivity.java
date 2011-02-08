@@ -25,7 +25,8 @@ import android.widget.Toast;
  * 
  * @author Xperimental
  */
-public class LoginActivity extends AccountAuthenticatorActivity {
+public class LoginActivity extends AccountAuthenticatorActivity implements
+        OnClickListener {
 
     public static final String ACTION_ERROR = LoginActivity.class.getName()
             + ".ERROR";
@@ -33,6 +34,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
     private String accountType;
     private AccountManager accountManager;
     private Button loginButton;
+    private Button cancelButton;
     private EditText usernameField;
     private EditText passwordField;
 
@@ -49,10 +51,12 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         accountType = getString(R.string.account_type);
         accountManager = AccountManager.get(this);
 
-        loginButton = (Button) findViewById(R.id.loginbutton);
-        loginButton.setOnClickListener(new LoginListener());
-        usernameField = (EditText) findViewById(R.id.username);
-        passwordField = (EditText) findViewById(R.id.password);
+        loginButton = (Button) findViewById(R.id.login_ok);
+        loginButton.setOnClickListener(this);
+        cancelButton = (Button) findViewById(R.id.login_cancel);
+        cancelButton.setOnClickListener(this);
+        usernameField = (EditText) findViewById(R.id.login_username);
+        passwordField = (EditText) findViewById(R.id.login_password);
 
         if (ACTION_ERROR.equals(getIntent().getAction())) {
             Bundle extras = getIntent().getExtras();
@@ -73,6 +77,7 @@ public class LoginActivity extends AccountAuthenticatorActivity {
      */
     protected void enableGui(boolean enabled) {
         loginButton.setEnabled(enabled);
+        cancelButton.setEnabled(enabled);
         usernameField.setEnabled(enabled);
         passwordField.setEnabled(enabled);
     }
@@ -101,18 +106,22 @@ public class LoginActivity extends AccountAuthenticatorActivity {
         }
     }
 
-    private class LoginListener implements OnClickListener {
-
-        /*
-         * (non-Javadoc)
-         * @see android.view.View.OnClickListener#onClick(android.view.View)
-         */
-        public void onClick(View v) {
+    /*
+     * (non-Javadoc)
+     * @see android.view.View.OnClickListener#onClick(android.view.View)
+     */
+    public void onClick(View v) {
+        switch (v.getId()) {
+        case R.id.login_ok:
             String username = usernameField.getText().toString();
             String password = passwordField.getText().toString();
 
             CredentialsTestTask task = new CredentialsTestTask();
             task.execute(username, password);
+            break;
+        case R.id.login_cancel:
+            finish();
+            break;
         }
     }
 
