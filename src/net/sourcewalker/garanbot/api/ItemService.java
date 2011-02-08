@@ -100,4 +100,18 @@ public class ItemService {
         }
     }
 
+    public int create(Item itemData) throws ClientException {
+        try {
+            String jsonData = itemData.json().toString();
+            HttpResponse response = client.put("/item", jsonData);
+            String responseContent = client.readEntity(response);
+            return Integer.parseInt(responseContent);
+        } catch (IOException e) {
+            throw new ClientException("IO error: " + e.getMessage(), e);
+        } catch (NumberFormatException e) {
+            throw new ClientException("Error parsing new item id: "
+                    + e.getMessage(), e);
+        }
+    }
+
 }

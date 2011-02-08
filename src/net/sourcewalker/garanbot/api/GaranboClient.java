@@ -7,7 +7,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EncodingUtils;
 
@@ -63,7 +65,6 @@ public class GaranboClient {
 
     private void prepareRequest(HttpRequestBase request) {
         request.addHeader("Content-type", "application/json");
-        request.addHeader("Accept", "application/json");
         request.addHeader("open-api", ApiConstants.KEY);
         request.addHeader("Authorization", getAuthHeader());
     }
@@ -107,6 +108,24 @@ public class GaranboClient {
      */
     protected HttpResponse delete(String path) throws IOException {
         HttpDelete request = new HttpDelete(ApiConstants.BASE + path);
+        prepareRequest(request);
+        return client.execute(request);
+    }
+
+    /**
+     * Execute HTTP PUT with URL and provided content.
+     * 
+     * @param path
+     *            Path to PUT to.
+     * @param jsonData
+     *            String with content to send.
+     * @return HTTP Response return by server.
+     * @throws IOException
+     *             When there was an error communicating with the server.
+     */
+    public HttpResponse put(String path, String jsonData) throws IOException {
+        HttpPut request = new HttpPut(ApiConstants.BASE + path);
+        request.setEntity(new StringEntity(jsonData));
         prepareRequest(request);
         return client.execute(request);
     }
