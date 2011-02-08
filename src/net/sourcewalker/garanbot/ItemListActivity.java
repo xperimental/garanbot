@@ -1,14 +1,22 @@
 package net.sourcewalker.garanbot;
 
+import java.io.IOException;
+
 import net.sourcewalker.garanbot.api.Item;
+import android.accounts.Account;
+import android.accounts.AccountManager;
+import android.accounts.AccountManagerCallback;
+import android.accounts.AccountManagerFuture;
+import android.accounts.AuthenticatorException;
+import android.accounts.OperationCanceledException;
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 /**
  * This activity displays the contents of the local database. The local database
@@ -22,6 +30,9 @@ import android.widget.ListView;
  */
 public class ItemListActivity extends ListActivity {
 
+    private String accountType;
+    private AccountManager accountManager;
+
     /*
      * (non-Javadoc)
      * @see android.app.Activity#onCreate(android.os.Bundle)
@@ -30,25 +41,63 @@ public class ItemListActivity extends ListActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        accountType = getString(R.string.account_type);
+        accountManager = AccountManager.get(this);
+        Account[] accounts = accountManager.getAccountsByType(accountType);
+        if (accounts.length == 0) {
+            startCreateAccount();
+        }
+
         // TODO Get items from database
         Item[] dummyItems = new Item[3];
         Item item1 = new Item(1);
         item1.setName("tolles Teil1");
         item1.setManufacturer("hersteller");
         dummyItems[0] = item1;
-        
+
         Item item2 = new Item(2);
         item2.setName("tolles Teil2");
         item2.setManufacturer("hersteller2");
         dummyItems[1] = item2;
-        
-        
+
         Item item3 = new Item(3);
         item3.setName("tolles Teil3");
         item3.setManufacturer("hersteller3");
         dummyItems[2] = item3;
-        
+
         setListAdapter(new ItemsAdapter(this, dummyItems));
+    }
+
+    /**
+     * Requests the creation of a new account in the account manager.
+     */
+    private void startCreateAccount() {
+        AccountManagerCallback<Bundle> callback = new AccountManagerCallback<Bundle>() {
+
+            @Override
+            public void run(AccountManagerFuture<Bundle> future) {
+                boolean created = false;
+                try {
+                    Bundle result = future.getResult();
+                    String username = (String) result
+                            .get(AccountManager.KEY_ACCOUNT_NAME);
+                    if (username != null) {
+                        created = true;
+                    }
+                } catch (OperationCanceledException e) {
+                } catch (AuthenticatorException e) {
+                } catch (IOException e) {
+                }
+                if (!created) {
+                    Toast.makeText(ItemListActivity.this,
+                            R.string.toast_needaccount, Toast.LENGTH_LONG)
+                            .show();
+                    finish();
+                }
+            }
+        };
+        accountManager.addAccount(accountType, null, null, null, this,
+                callback, null);
     }
 
     /*

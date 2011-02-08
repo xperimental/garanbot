@@ -1,12 +1,12 @@
-package net.sourcewalker.garanbot;
+package net.sourcewalker.garanbot.account;
 
+import net.sourcewalker.garanbot.R;
 import net.sourcewalker.garanbot.api.ClientException;
 import net.sourcewalker.garanbot.api.GaranboClient;
 import net.sourcewalker.garanbot.api.User;
-import net.sourcewalker.garanbot.data.Prefs;
+import android.accounts.Account;
+import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
-import android.app.Activity;
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -25,9 +25,13 @@ import android.widget.Toast;
  * 
  * @author Xperimental
  */
-public class LoginActivity extends Activity {
+public class LoginActivity extends AccountAuthenticatorActivity {
 
-    private Prefs preferences;
+    public static final String ACTION_ERROR = LoginActivity.class.getName()
+            + ".ERROR";
+
+    private String accountType;
+    private AccountManager accountManager;
     private Button loginButton;
     private EditText usernameField;
     private EditText passwordField;
@@ -42,16 +46,23 @@ public class LoginActivity extends Activity {
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_login);
 
-        preferences = new Prefs(this);
+        accountType = getString(R.string.account_type);
+        accountManager = AccountManager.get(this);
 
         loginButton = (Button) findViewById(R.id.loginbutton);
         loginButton.setOnClickListener(new LoginListener());
-
         usernameField = (EditText) findViewById(R.id.username);
-        usernameField.setText(preferences.getUsername());
-
         passwordField = (EditText) findViewById(R.id.password);
-        passwordField.setText(preferences.getPassword());
+
+        if (ACTION_ERROR.equals(getIntent().getAction())) {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null) {
+                String message = extras
+                        .getString(AccountManager.KEY_ERROR_MESSAGE);
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            }
+            finish();
+        }
     }
 
     /**
@@ -66,7 +77,31 @@ public class LoginActivity extends Activity {
         passwordField.setEnabled(enabled);
     }
 
-    public class LoginListener implements OnClickListener {
+    /**
+     * Create the account in the account manager.
+     * 
+     * @param username
+     *            Username of new account.
+     * @param password
+     *            Password of new account.
+     */
+    public void createAccount(String username, String password) {
+        Account account = new Account(username, accountType);
+        boolean created = accountManager.addAccountExplicitly(account,
+                password, null);
+        if (created) {
+            Bundle result = new Bundle();
+            result.putString(AccountManager.KEY_ACCOUNT_NAME, username);
+            result.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
+            setAccountAuthenticatorResult(result);
+            finish();
+        } else {
+            Toast.makeText(this, R.string.toast_account_createfailed,
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private class LoginListener implements OnClickListener {
 
         /*
          * (non-Javadoc)
@@ -81,7 +116,21 @@ public class LoginActivity extends Activity {
         }
     }
 
-    public class CredentialsTestTask extends AsyncTask<String, Void, Boolean> {
+    private class LoginResult {
+
+        public String username;
+        public String password;
+        public boolean successful;
+
+        public LoginResult(String username, String password, boolean result) {
+            this.username = username;
+            this.password = password;
+            this.successful = result;
+        }
+    }
+
+    private class CredentialsTestTask extends
+            AsyncTask<String, Void, LoginResult> {
 
         /*
          * (non-Javadoc)
@@ -98,7 +147,7 @@ public class LoginActivity extends Activity {
          * @see android.os.AsyncTask#doInBackground(Params[])
          */
         @Override
-        protected Boolean doInBackground(String... params) {
+        protected LoginResult doInBackground(String... params) {
             String username = params[0];
             String password = params[1];
             GaranboClient client = new GaranboClient(username, password);
@@ -109,7 +158,7 @@ public class LoginActivity extends Activity {
             } catch (ClientException e) {
                 // Any exception causes login to fail.
             }
-            return result;
+            return new LoginResult(username, password, result);
         }
 
         /*
@@ -117,16 +166,12 @@ public class LoginActivity extends Activity {
          * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
          */
         @Override
-        protected void onPostExecute(Boolean result) {
+        protected void onPostExecute(LoginResult result) {
             setProgressBarIndeterminateVisibility(false);
             enableGui(true);
 
-            if (result) {
-                preferences.setUsername(usernameField.getText().toString());
-                preferences.setPassword(passwordField.getText().toString());
-
-                startActivity(new Intent(LoginActivity.this,
-                        ItemListActivity.class));
+            if (result.successful) {
+                createAccount(result.username, result.password);
             } else {
                 Toast.makeText(LoginActivity.this, R.string.toast_loginfailed,
                         Toast.LENGTH_LONG).show();

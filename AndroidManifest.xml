@@ -8,9 +8,11 @@
         android:icon="@drawable/icon"
         android:label="@string/app_name">
         <activity
-            android:name=".LoginActivity"
+            android:name=".account.LoginActivity"
             android:label="@string/app_name"
-            android:noHistory="true">
+            android:noHistory="true" />
+        <activity
+            android:name=".ItemListActivity">
             <intent-filter>
                 <action
                     android:name="android.intent.action.MAIN" />
@@ -19,16 +21,33 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ItemListActivity" />
-        <activity
             android:name=".ViewItemActivity" />
         <activity
             android:name=".EditItemActivity" />
         <activity
             android:name=".SettingsActivity" />
+        <service
+            android:exported="true"
+            android:name=".account.AuthenticatorService">
+            <intent-filter>
+                <action
+                    android:name="android.accounts.AccountAuthenticator" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accounts.AccountAuthenticator"
+                android:resource="@xml/authenticator" />
+        </service>
     </application>
     <uses-sdk
         android:minSdkVersion="8" />
     <uses-permission
         android:name="android.permission.INTERNET" />
+    <uses-permission
+        android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission
+        android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission
+        android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission
+        android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
 </manifest> 
