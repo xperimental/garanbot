@@ -102,7 +102,9 @@ public class ItemListActivity extends ListActivity {
      */
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        startActivity(new Intent(this, ViewItemActivity.class));
+        Intent viewIntent = new Intent(this, ViewItemActivity.class);
+        viewIntent.setAction(Long.toString(id));
+        startActivity(viewIntent);
     }
 
     /*

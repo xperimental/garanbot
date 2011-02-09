@@ -30,4 +30,5 @@
     <string name="apply_create_item">OK</string>
     <string name="cancel_create_item">Cancel</string>
     <string name="input_purch_date">Set purchase date.</string>
+    <string name="toast_view_itemnotfound">Database error: item could not be retrieved!</string>
 </resources>
