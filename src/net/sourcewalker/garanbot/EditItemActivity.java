@@ -2,9 +2,13 @@ package net.sourcewalker.garanbot;
 
 import java.util.Calendar;
 
+import net.sourcewalker.garanbot.data.GaranboItemsProvider;
+import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
+import android.content.ContentValues;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -49,20 +53,24 @@ public class EditItemActivity extends Activity {
                     .getText().toString();
             String notes = ((EditText) findViewById(R.id.item_notes)).getText()
                     .toString();
-            String purchaseDate = ((EditText) findViewById(R.id.item_purchasedate))
+            String purchaseDate = ((Button) findViewById(R.id.item_purchasedate))
                     .getText().toString();
             String vendor = ((EditText) findViewById(R.id.item_vendor))
                     .getText().toString();
 
-            saveItem(name, manufacturer, itemtype, location, notes,
-                    purchaseDate, vendor);
-        }
+            ContentValues values = new ContentValues();
 
-        private void saveItem(String name, String manufacturer,
-                String itemtype, String location, String notes,
-                String purchaseDate, String vendor) {
-            // TODO Auto-generated method stub
+            values.put(GaranbotDBMetaData.NAME, name);
+            values.put(GaranbotDBMetaData.MANUFACTURER, manufacturer);
+            values.put(GaranbotDBMetaData.ITEMTYPE, itemtype);
+            values.put(GaranbotDBMetaData.LOCATION, location);
+            values.put(GaranbotDBMetaData.NOTES, notes);
+            values.put(GaranbotDBMetaData.PURCHASEDATE, purchaseDate);
+            values.put(GaranbotDBMetaData.VENDOR, vendor);
 
+            Uri uri = getContentResolver().insert(
+                    GaranboItemsProvider.CONTENT_URI, values);
+            finish();
         }
     };
 

@@ -17,6 +17,8 @@ public class GaranbotDBMetaData implements BaseColumns {
     public static final String PURCHASEDATE = "purchasedate";
     public static final String ENDOFWARRANTY = "endofwarranty";
 
+    public static final String STATUS = "status";
+
     static final String SCHEMA = "CREATE TABLE " + TABLE_NAME + "(" + _ID
             + " integer primary key, " + NAME + " TEXT, " + MANUFACTURER
             + " TEXT, " + ITEMTYPE + " TEXT, " + VENDOR + " TEXT, " + LOCATION
