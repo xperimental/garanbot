@@ -4,9 +4,13 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
+import android.database.Cursor;
 
 /**
  * Contains the data of one registered item.
@@ -225,6 +229,47 @@ public class Item {
             throw new ClientException("Error parsing date: " + e.getMessage(),
                     e);
         }
+    }
+
+    /**
+     * Tries to create an Item object from the database row.
+     * 
+     * @param cursor
+     *            Cursor to read row from.
+     * @return Item object.
+     * @throws ClientException
+     *             If the cursor doesn't contain the data necessary for the
+     *             object.
+     */
+    public static Item fromCursor(Cursor cursor) throws ClientException {
+        int id = cursor.getInt(cursor.getColumnIndex(GaranbotDBMetaData._ID));
+        Item result = new Item(id);
+        try {
+            result.setName(cursor.getString(cursor
+                    .getColumnIndexOrThrow(GaranbotDBMetaData.NAME)));
+            result.setManufacturer(cursor.getString(cursor
+                    .getColumnIndexOrThrow(GaranbotDBMetaData.MANUFACTURER)));
+            result.setItemType(cursor.getString(cursor
+                    .getColumnIndexOrThrow(GaranbotDBMetaData.ITEMTYPE)));
+            result.setVendor(cursor.getString(cursor
+                    .getColumnIndexOrThrow(GaranbotDBMetaData.VENDOR)));
+            result.setLocation(cursor.getString(cursor
+                    .getColumnIndexOrThrow(GaranbotDBMetaData.LOCATION)));
+            result.setNotes(cursor.getString(cursor
+                    .getColumnIndexOrThrow(GaranbotDBMetaData.NOTES)));
+            result.setHasPicture(cursor.getInt(cursor
+                    .getColumnIndexOrThrow(GaranbotDBMetaData.HASPICTURE)) == 1);
+            // TODO Database needs visibility column
+            result.setVisibility(ItemVisibility.PRIVATE);
+            result.setPurchaseDate(parseDate(cursor.getString(cursor
+                    .getColumnIndexOrThrow(GaranbotDBMetaData.PURCHASEDATE))));
+            result.setEndOfWarranty(parseDate(cursor.getString(cursor
+                    .getColumnIndexOrThrow(GaranbotDBMetaData.ENDOFWARRANTY))));
+        } catch (IllegalArgumentException e) {
+            throw new ClientException("Cursor data invalid: " + e.getMessage(),
+                    e);
+        }
+        return result;
     }
 
 }
