@@ -3,6 +3,7 @@ package net.sourcewalker.garanbot.data;
 import java.util.HashMap;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
@@ -32,6 +33,7 @@ public class GaranboItemsProvider extends ContentProvider {
     static {
         matcher = new UriMatcher(UriMatcher.NO_MATCH);
         matcher.addURI(GaranbotDBMetaData.AUTHORITY, "items", MATCH_LIST);
+        matcher.addURI(GaranbotDBMetaData.AUTHORITY, "items/#", MATCH_ITEM);
 
         projectionMap = new HashMap<String, String>();
         for (String col : GaranbotDBMetaData.DEFAULT_PROJECTION) {
@@ -50,8 +52,8 @@ public class GaranboItemsProvider extends ContentProvider {
             break;
         case MATCH_ITEM:
             result = db.delete(GaranbotDBMetaData.TABLE_NAME,
-                    GaranbotDBMetaData._ID + " == ?", new String[] { uri
-                            .getLastPathSegment() });
+                    GaranbotDBMetaData._ID + " == ?",
+                    new String[] { uri.getLastPathSegment() });
             break;
         default:
             throw new IllegalArgumentException("Unknown URI: " + uri);
@@ -74,8 +76,8 @@ public class GaranboItemsProvider extends ContentProvider {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             db.insert(GaranbotDBMetaData.TABLE_NAME, GaranbotDBMetaData.STATUS,
                     values);
-            Uri numberUri = Uri.withAppendedPath(CONTENT_URI, values
-                    .getAsString(GaranbotDBMetaData._ID));
+            Uri numberUri = Uri.withAppendedPath(CONTENT_URI,
+                    values.getAsString(GaranbotDBMetaData._ID));
             getContext().getContentResolver().notifyChange(numberUri, null);
             return numberUri;
         default:
@@ -104,16 +106,22 @@ public class GaranboItemsProvider extends ContentProvider {
         if (sortOrder == null) {
             sortOrder = GaranbotDBMetaData.DEFAULT_SORT_ORDER;
         }
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor c;
         switch (matcher.match(uri)) {
         case MATCH_LIST:
-            SQLiteDatabase db = dbHelper.getReadableDatabase();
-            Cursor c = query.query(db, projection, selection, selectionArgs,
-                    null, null, sortOrder);
-            c.setNotificationUri(getContext().getContentResolver(), uri);
-            return c;
+            break;
+        case MATCH_ITEM:
+            query.appendWhere(GaranbotDBMetaData._ID + " == "
+                    + ContentUris.parseId(uri));
+            break;
         default:
             throw new IllegalArgumentException("Unknown URI: " + uri);
         }
+        c = query.query(db, projection, selection, selectionArgs, null, null,
+                sortOrder);
+        c.setNotificationUri(getContext().getContentResolver(), uri);
+        return c;
     }
 
     @Override
@@ -123,8 +131,8 @@ public class GaranboItemsProvider extends ContentProvider {
         case MATCH_ITEM:
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             int result = db.update(GaranbotDBMetaData.TABLE_NAME, values,
-                    GaranbotDBMetaData._ID + " == ?", new String[] { uri
-                            .getLastPathSegment() });
+                    GaranbotDBMetaData._ID + " == ?",
+                    new String[] { uri.getLastPathSegment() });
             getContext().getContentResolver().notifyChange(uri, null);
             return result;
         default:
