@@ -34,6 +34,7 @@
     <string name="input_purch_date">Set purchase date.</string>
     <string name="toast_view_itemnotfound">Database error: item could not be retrieved!</string>
     <string name="toast_view_itemerror">Error loading item!</string>
+    <string name="toast_view_pictureerror">Error loading picture!</string>
     <string name="item_view_manufacturer">Manufacturer:</string>
     <string name="item_view_model">Model:</string>
     <string name="item_view_vendor">Vendor:</string>
