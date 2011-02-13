@@ -65,7 +65,11 @@
             <TextView
                 android:text="@string/item_view_manufacturer"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:gravity="right"
+                android:paddingRight="5dip"
+                android:paddingBottom="5dip"
+                android:textStyle="bold">
             </TextView>
             <TextView
                 android:text="Manufacturer"
@@ -81,7 +85,11 @@
             <TextView
                 android:text="@string/item_view_model"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content">
+                android:layout_width="wrap_content"
+                android:gravity="right"
+                android:paddingRight="5dip"
+                android:paddingBottom="5dip"
+                android:textStyle="bold">
             </TextView>
             <TextView
                 android:text="Model"
@@ -97,7 +105,11 @@
             <TextView
                 android:text="@string/item_view_location"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content">
+                android:layout_width="wrap_content"
+                android:gravity="right"
+                android:paddingRight="5dip"
+                android:paddingBottom="5dip"
+                android:textStyle="bold">
             </TextView>
             <TextView
                 android:text="Location"
@@ -144,7 +156,11 @@
             <TextView
                 android:text="@string/item_view_vendor"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content">
+                android:layout_width="wrap_content"
+                android:gravity="right"
+                android:paddingRight="5dip"
+                android:paddingBottom="5dip"
+                android:textStyle="bold">
             </TextView>
             <TextView
                 android:text="Vendor"
@@ -160,7 +176,11 @@
             <TextView
                 android:text="@string/item_view_purchase"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content">
+                android:layout_width="wrap_content"
+                android:gravity="right"
+                android:paddingRight="5dip"
+                android:paddingBottom="5dip"
+                android:textStyle="bold">
             </TextView>
             <TextView
                 android:text="Purchase Date"
@@ -176,7 +196,11 @@
             <TextView
                 android:text="@string/item_view_endwarranty"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content">
+                android:layout_width="wrap_content"
+                android:gravity="right"
+                android:paddingRight="5dip"
+                android:paddingBottom="5dip"
+                android:textStyle="bold">
             </TextView>
             <TextView
                 android:text="End of warranty"
