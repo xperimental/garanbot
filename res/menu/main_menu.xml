@@ -6,6 +6,9 @@
         android:title="@string/menu_add"
         android:icon="@android:drawable/ic_menu_add" />
     <item
+        android:id="@+id/menu_load"
+        android:title="@string/menu_load" />
+    <item
         android:id="@+id/menu_settings"
         android:title="@string/menu_settings"
         android:icon="@android:drawable/ic_menu_preferences" />

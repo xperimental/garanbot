@@ -42,6 +42,8 @@
             android:name="net.sourcewalker.garanbot.data.GaranboItemsProvider"
             android:authorities="net.sourcewalker.garanbot">
         </provider>
+        <service
+            android:name=".ItemDownloadService" />
     </application>
     <uses-sdk
         android:minSdkVersion="8" />

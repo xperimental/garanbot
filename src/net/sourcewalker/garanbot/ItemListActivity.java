@@ -132,6 +132,9 @@ public class ItemListActivity extends ListActivity {
         case R.id.menu_add:
             startActivity(new Intent(this, EditItemActivity.class));
             break;
+        case R.id.menu_load:
+            startService(new Intent(this, ItemDownloadService.class));
+            break;
         case R.id.menu_settings:
             startActivity(new Intent(this, SettingsActivity.class));
             break;

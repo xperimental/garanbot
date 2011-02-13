@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.content.ContentValues;
 import android.database.Cursor;
 
 /**
@@ -274,6 +275,30 @@ public class Item {
             throw new ClientException("Cursor data invalid: " + e.getMessage(),
                     e);
         }
+        return result;
+    }
+
+    /**
+     * Turn the item into a representation the local database can use.
+     * 
+     * @return {@link ContentValues} object filled with the data from the Item
+     *         instance.
+     */
+    public ContentValues toContentValues() {
+        ContentValues result = new ContentValues();
+        result.put(GaranbotDBMetaData._ID, getId());
+        result.put(GaranbotDBMetaData.NAME, getName());
+        result.put(GaranbotDBMetaData.MANUFACTURER, getManufacturer());
+        result.put(GaranbotDBMetaData.ITEMTYPE, getItemType());
+        result.put(GaranbotDBMetaData.VENDOR, getVendor());
+        result.put(GaranbotDBMetaData.LOCATION, getLocation());
+        result.put(GaranbotDBMetaData.NOTES, getNotes());
+        result.put(GaranbotDBMetaData.HASPICTURE, hasPicture() ? 1 : 0);
+        // TODO Database needs visibility column
+        result.put(GaranbotDBMetaData.PURCHASEDATE,
+                dateString(getPurchaseDate()));
+        result.put(GaranbotDBMetaData.ENDOFWARRANTY,
+                dateString(getEndOfWarranty()));
         return result;
     }
 
