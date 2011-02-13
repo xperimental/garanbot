@@ -24,7 +24,7 @@ public class GaranbotDBHelper extends SQLiteOpenHelper {
                 .execSQL("INSERT INTO "
                         + GaranbotDBMetaData.TABLE_NAME
                         + " (name,manufacturer,itemtype,vendor,location,notes,haspicture,purchasedate,endofwarranty) "
-                        + "VALUES ('dummyEntry','matchbox','toy','schinacher','fn','green car', 0,'2002-12-24','2004-12-24')");
+                        + "VALUES ('dummyEntry','matchbox','toy','schinacher','fn','green car', 0,'2002-12-24T00:00:00+00:00','2004-12-24T00:00:00+00:00')");
     }
 
     @Override
