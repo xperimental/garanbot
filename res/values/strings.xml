@@ -31,4 +31,12 @@
     <string name="cancel_create_item">Cancel</string>
     <string name="input_purch_date">Set purchase date.</string>
     <string name="toast_view_itemnotfound">Database error: item could not be retrieved!</string>
+    <string name="item_view_manufacturer">Manufacturer:</string>
+    <string name="item_view_model">Model:</string>
+    <string name="item_view_vendor">Vendor:</string>
+    <string name="item_view_location">Location:</string>
+    <string name="item_view_details">Details</string>
+    <string name="item_view_warranty">Warranty</string>
+    <string name="item_view_purchase">Purchase date:</string>
+    <string name="item_view_endwarranty">End of warranty:</string>
 </resources>
