@@ -102,15 +102,40 @@ public class ItemService {
 
     public int create(Item itemData) throws ClientException {
         try {
+            if (itemData.getId() != Item.UNKNOWN_ID) {
+                throw new ClientException(
+                        "Can't create Item which already has an ID!");
+            }
             String jsonData = itemData.json().toString();
             HttpResponse response = client.put("/item", jsonData);
-            String responseContent = client.readEntity(response);
-            return Integer.parseInt(responseContent);
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+                String responseContent = client.readEntity(response);
+                return Integer.parseInt(responseContent);
+            } else {
+                throw new ClientException("Got HTTP error: "
+                        + response.getStatusLine().toString());
+            }
         } catch (IOException e) {
             throw new ClientException("IO error: " + e.getMessage(), e);
         } catch (NumberFormatException e) {
             throw new ClientException("Error parsing new item id: "
                     + e.getMessage(), e);
+        }
+    }
+
+    public void update(Item itemData) throws ClientException {
+        try {
+            if (itemData.getId() == Item.UNKNOWN_ID) {
+                throw new ClientException("Can't update Item with no ID!");
+            }
+            String jsonData = itemData.json().toString();
+            HttpResponse response = client.put("/item", jsonData);
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+                throw new ClientException("Got HTTP error: "
+                        + response.getStatusLine().toString());
+            }
+        } catch (IOException e) {
+            throw new ClientException("IO error: " + e.getMessage(), e);
         }
     }
 

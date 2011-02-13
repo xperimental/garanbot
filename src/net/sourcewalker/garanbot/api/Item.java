@@ -19,6 +19,8 @@ import android.database.Cursor;
  */
 public class Item {
 
+    public static final int UNKNOWN_ID = -1;
+
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm:ssZ");
 
@@ -168,6 +170,9 @@ public class Item {
     public JSONObject json() throws ClientException {
         try {
             JSONObject result = new JSONObject();
+            if (getId() != UNKNOWN_ID) {
+                result.put("id", getId());
+            }
             result.put("name", getName());
             result.put("manufacturer", getManufacturer());
             result.put("itemType", getItemType());
