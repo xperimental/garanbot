@@ -1,7 +1,6 @@
 package net.sourcewalker.garanbot.api;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,6 +13,8 @@ import org.json.JSONTokener;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.util.Base64;
+import android.util.Base64InputStream;
 
 public class ItemService {
 
@@ -72,8 +73,9 @@ public class ItemService {
         try {
             HttpResponse response = client.get("/item/" + id + "/picture");
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                InputStream content = response.getEntity().getContent();
-                Bitmap result = BitmapFactory.decodeStream(content);
+                Base64InputStream stream = new Base64InputStream(response
+                        .getEntity().getContent(), Base64.DEFAULT);
+                Bitmap result = BitmapFactory.decodeStream(stream);
                 if (result != null) {
                     return result;
                 } else {
