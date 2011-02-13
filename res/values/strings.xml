@@ -9,6 +9,7 @@
     <string name="input_login">Login</string>
     <string name="menu_add">Add item</string>
     <string name="menu_settings">Settings</string>
+    <string name="menu_delete">Delete</string>
     <string name="prefs_username_key">login.username</string>
     <string name="prefs_username_default"></string>
     <string name="prefs_password_key">login.password</string>
@@ -31,6 +32,7 @@
     <string name="cancel_create_item">Cancel</string>
     <string name="input_purch_date">Set purchase date.</string>
     <string name="toast_view_itemnotfound">Database error: item could not be retrieved!</string>
+    <string name="toast_view_itemerror">Error loading item!</string>
     <string name="item_view_manufacturer">Manufacturer:</string>
     <string name="item_view_model">Model:</string>
     <string name="item_view_vendor">Vendor:</string>
@@ -39,4 +41,5 @@
     <string name="item_view_warranty">Warranty</string>
     <string name="item_view_purchase">Purchase date:</string>
     <string name="item_view_endwarranty">End of warranty:</string>
+    <string name="toast_list_deleteerror">Error deleting item!</string>
 </resources>

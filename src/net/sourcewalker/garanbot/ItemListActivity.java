@@ -11,12 +11,16 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.ListActivity;
+import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.view.ContextMenu;
+import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
@@ -43,6 +47,7 @@ public class ItemListActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        registerForContextMenu(getListView());
 
         accountType = getString(R.string.account_type);
         accountManager = AccountManager.get(this);
@@ -132,6 +137,54 @@ public class ItemListActivity extends ListActivity {
             break;
         }
         return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onCreateContextMenu(android.view.ContextMenu,
+     * android.view.View, android.view.ContextMenu.ContextMenuInfo)
+     */
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v,
+            ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.list_context, menu);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onContextItemSelected(android.view.MenuItem)
+     */
+    @Override
+    public boolean onContextItemSelected(MenuItem item) {
+        ContextMenuInfo menuInfo = item.getMenuInfo();
+        switch (item.getItemId()) {
+        case R.id.menu_delete:
+            if (menuInfo instanceof AdapterContextMenuInfo) {
+                AdapterContextMenuInfo adapterInfo = (AdapterContextMenuInfo) menuInfo;
+                deleteItem(adapterInfo.id);
+            }
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown menu item: " + item);
+        }
+        return true;
+    }
+
+    /**
+     * Delete the selected item from the local database.
+     * 
+     * @param id
+     *            Id of item to delete.
+     */
+    private void deleteItem(long id) {
+        int count = getContentResolver()
+                .delete(ContentUris.withAppendedId(
+                        GaranboItemsProvider.CONTENT_URI, id), null, null);
+        if (count != 1) {
+            Toast.makeText(this, R.string.toast_list_deleteerror,
+                    Toast.LENGTH_LONG).show();
+        }
     }
 
 }
