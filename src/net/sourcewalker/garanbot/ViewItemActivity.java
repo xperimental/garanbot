@@ -40,6 +40,7 @@ public class ViewItemActivity extends Activity {
     private TextView locationField;
     private TextView purchaseField;
     private TextView warrantyField;
+    private TextView notesField;
 
     /*
      * (non-Javadoc)
@@ -59,6 +60,7 @@ public class ViewItemActivity extends Activity {
         locationField = (TextView) findViewById(R.id.item_view_location);
         purchaseField = (TextView) findViewById(R.id.item_view_purchase);
         warrantyField = (TextView) findViewById(R.id.item_view_endwarranty);
+        notesField = (TextView) findViewById(R.id.item_view_notes);
 
         String action = getIntent().getAction();
         if (action == null) {
@@ -99,6 +101,7 @@ public class ViewItemActivity extends Activity {
         locationField.setText(source.getLocation());
         purchaseField.setText(dateFormat.format(source.getPurchaseDate()));
         warrantyField.setText(dateFormat.format(source.getEndOfWarranty()));
+        notesField.setText(source.getNotes());
         if (source.hasPicture()) {
             GetPictureTask task = new GetPictureTask();
             task.execute(source.getId());

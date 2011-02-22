@@ -43,5 +43,6 @@
     <string name="item_view_warranty">Warranty</string>
     <string name="item_view_purchase">Purchase date:</string>
     <string name="item_view_endwarranty">End of warranty:</string>
+    <string name="item_view_notes">Notes</string>
     <string name="toast_list_deleteerror">Error deleting item!</string>
 </resources>
