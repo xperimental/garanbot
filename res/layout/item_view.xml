@@ -7,7 +7,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#000000">
+        style="@style/ViewItemBackground">
         <ImageView
             android:id="@+id/item_view_image"
             android:layout_width="96dip"
@@ -36,18 +36,10 @@
         android:layout_height="wrap_content"
         android:stretchColumns="1">
         <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#F0F0F0">
+            style="@style/ViewItemHeader">
             <TextView
-                android:text="@string/item_view_details"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_span="2"
-                android:paddingLeft="8dip"
-                android:textSize="10pt"
-                android:typeface="serif"
-                android:textColor="#000000" />
+                style="@style/ViewItemHeaderText"
+                android:text="@string/item_view_details" />
         </TableRow>
         <TableRow
             android:layout_width="match_parent"
@@ -59,64 +51,34 @@
                 android:background="@drawable/top_gradient" />
         </TableRow>
         <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#000000">
+            style="@style/ViewItemRow">
             <TextView
-                android:text="@string/item_view_manufacturer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="right"
-                android:paddingRight="5dip"
-                android:paddingBottom="5dip"
-                android:textStyle="bold">
-            </TextView>
+                style="@style/ViewItemRowHeader"
+                android:text="@string/item_view_manufacturer" />
             <TextView
+                style="@style/ViewItemRowData"
                 android:text="Manufacturer"
-                android:id="@+id/item_view_manufacturer"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
-            </TextView>
+                android:id="@+id/item_view_manufacturer" />
         </TableRow>
         <TableRow
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:background="#000000">
+            style="@style/ViewItemRow">
             <TextView
-                android:text="@string/item_view_model"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:gravity="right"
-                android:paddingRight="5dip"
-                android:paddingBottom="5dip"
-                android:textStyle="bold">
-            </TextView>
+                style="@style/ViewItemRowHeader"
+                android:text="@string/item_view_model" />
             <TextView
+                style="@style/ViewItemRowData"
                 android:text="Model"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:id="@+id/item_view_model">
-            </TextView>
+                android:id="@+id/item_view_model" />
         </TableRow>
         <TableRow
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:background="#000000">
+            style="@style/ViewItemRow">
             <TextView
-                android:text="@string/item_view_location"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:gravity="right"
-                android:paddingRight="5dip"
-                android:paddingBottom="5dip"
-                android:textStyle="bold">
-            </TextView>
+                style="@style/ViewItemRowHeader"
+                android:text="@string/item_view_location" />
             <TextView
+                style="@style/ViewItemRowData"
                 android:text="Location"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:id="@+id/item_view_location">
-            </TextView>
+                android:id="@+id/item_view_location" />
         </TableRow>
         <TableRow
             android:layout_width="match_parent"
@@ -128,17 +90,10 @@
                 android:background="@drawable/bottom_gradient" />
         </TableRow>
         <TableRow
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="#F0F0F0">
+            style="@style/ViewItemHeader">
             <TextView
-                android:text="@string/item_view_warranty"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:layout_span="2"
-                android:textSize="10pt"
-                android:paddingLeft="8dip"
-                android:textColor="#000000" />
+                style="@style/ViewItemHeaderText"
+                android:text="@string/item_view_warranty" />
         </TableRow>
         <TableRow
             android:layout_width="match_parent"
@@ -150,64 +105,34 @@
                 android:background="@drawable/top_gradient" />
         </TableRow>
         <TableRow
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:background="#000000">
+            style="@style/ViewItemRow">
             <TextView
-                android:text="@string/item_view_vendor"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:gravity="right"
-                android:paddingRight="5dip"
-                android:paddingBottom="5dip"
-                android:textStyle="bold">
-            </TextView>
+                style="@style/ViewItemRowHeader"
+                android:text="@string/item_view_vendor" />
             <TextView
+                style="@style/ViewItemRowData"
                 android:text="Vendor"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:id="@+id/item_view_vendor">
-            </TextView>
+                android:id="@+id/item_view_vendor" />
         </TableRow>
         <TableRow
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:background="#000000">
+            style="@style/ViewItemRow">
             <TextView
-                android:text="@string/item_view_purchase"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:gravity="right"
-                android:paddingRight="5dip"
-                android:paddingBottom="5dip"
-                android:textStyle="bold">
-            </TextView>
+                style="@style/ViewItemRowHeader"
+                android:text="@string/item_view_purchase" />
             <TextView
+                style="@style/ViewItemRowData"
                 android:text="Purchase Date"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:id="@+id/item_view_purchase">
-            </TextView>
+                android:id="@+id/item_view_purchase" />
         </TableRow>
         <TableRow
-            android:layout_height="wrap_content"
-            android:layout_width="match_parent"
-            android:background="#000000">
+            style="@style/ViewItemRow">
             <TextView
-                android:text="@string/item_view_endwarranty"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:gravity="right"
-                android:paddingRight="5dip"
-                android:paddingBottom="5dip"
-                android:textStyle="bold">
-            </TextView>
+                style="@style/ViewItemRowHeader"
+                android:text="@string/item_view_endwarranty" />
             <TextView
+                style="@style/ViewItemRowData"
                 android:text="End of warranty"
-                android:layout_height="wrap_content"
-                android:layout_width="wrap_content"
-                android:id="@+id/item_view_endwarranty">
-            </TextView>
+                android:id="@+id/item_view_endwarranty" />
         </TableRow>
     </TableLayout>
 </LinearLayout>
