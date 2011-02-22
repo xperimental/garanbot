@@ -265,8 +265,8 @@ public class Item {
                     .getColumnIndexOrThrow(GaranbotDBMetaData.NOTES)));
             result.setHasPicture(cursor.getInt(cursor
                     .getColumnIndexOrThrow(GaranbotDBMetaData.HASPICTURE)) == 1);
-            // TODO Database needs visibility column
-            result.setVisibility(ItemVisibility.PRIVATE);
+            result.setVisibility(ItemVisibility.parseInt(cursor.getInt(cursor
+                    .getColumnIndexOrThrow(GaranbotDBMetaData.VISIBILITY))));
             result.setPurchaseDate(parseDate(cursor.getString(cursor
                     .getColumnIndexOrThrow(GaranbotDBMetaData.PURCHASEDATE))));
             result.setEndOfWarranty(parseDate(cursor.getString(cursor
@@ -294,7 +294,7 @@ public class Item {
         result.put(GaranbotDBMetaData.LOCATION, getLocation());
         result.put(GaranbotDBMetaData.NOTES, getNotes());
         result.put(GaranbotDBMetaData.HASPICTURE, hasPicture() ? 1 : 0);
-        // TODO Database needs visibility column
+        result.put(GaranbotDBMetaData.VISIBILITY, getVisibility().getValue());
         result.put(GaranbotDBMetaData.PURCHASEDATE,
                 dateString(getPurchaseDate()));
         result.put(GaranbotDBMetaData.ENDOFWARRANTY,

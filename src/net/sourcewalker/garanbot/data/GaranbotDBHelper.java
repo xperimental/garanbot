@@ -8,8 +8,8 @@ import android.util.Log;
 public class GaranbotDBHelper extends SQLiteOpenHelper {
 
     private final String TAG = "GaranbotDBHelper";
-    private static final String DATABASE_NAME = "garanbot.sql";
-    private static final int DATABASE_VERSION = 2;
+    private static final String DATABASE_NAME = "garanbot.db";
+    private static final int DATABASE_VERSION = 3;
 
     public GaranbotDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
