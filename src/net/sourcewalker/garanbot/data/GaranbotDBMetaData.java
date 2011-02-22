@@ -20,6 +20,13 @@ public final class GaranbotDBMetaData implements BaseColumns {
 
     public static final String STATUS = "status";
 
+    /**
+     * This column is not actually stored in the database but instead only
+     * provided by the {@link GaranboItemsProvider}. Therefore it is also not
+     * included in the {@link #DEFAULT_PROJECTION}.
+     */
+    public static final String IMAGE_URI = "image";
+
     static final String SCHEMA = "CREATE TABLE " + TABLE_NAME + "(" + _ID
             + " integer primary key, " + NAME + " TEXT, " + MANUFACTURER
             + " TEXT, " + ITEMTYPE + " TEXT, " + VENDOR + " TEXT, " + LOCATION

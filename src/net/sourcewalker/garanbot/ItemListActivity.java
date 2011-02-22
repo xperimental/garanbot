@@ -59,12 +59,14 @@ public class ItemListActivity extends ListActivity {
         // query content provider to receive all garanbo items
         Cursor cursor = managedQuery(GaranboItemsProvider.CONTENT_URI_ITEMS,
                 new String[] { GaranbotDBMetaData._ID, GaranbotDBMetaData.NAME,
-                        GaranbotDBMetaData.MANUFACTURER, "image" }, null, null,
+                        GaranbotDBMetaData.MANUFACTURER,
+                        GaranbotDBMetaData.IMAGE_URI }, null, null,
                 GaranbotDBMetaData.DEFAULT_SORT_ORDER);
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
                 R.layout.list_item, cursor, new String[] {
                         GaranbotDBMetaData.NAME,
-                        GaranbotDBMetaData.MANUFACTURER, "image" }, new int[] {
+                        GaranbotDBMetaData.MANUFACTURER,
+                        GaranbotDBMetaData.IMAGE_URI }, new int[] {
                         R.id.firstLine, R.id.secondLine, R.id.icon });
         setListAdapter(adapter);
     }
