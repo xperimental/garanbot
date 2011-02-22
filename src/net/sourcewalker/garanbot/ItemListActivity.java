@@ -57,7 +57,7 @@ public class ItemListActivity extends ListActivity {
         }
 
         // query content provider to receive all garanbo items
-        Cursor cursor = managedQuery(GaranboItemsProvider.CONTENT_URI,
+        Cursor cursor = managedQuery(GaranboItemsProvider.CONTENT_URI_ITEMS,
                 GaranbotDBMetaData.DEFAULT_PROJECTION, null, null,
                 GaranbotDBMetaData.DEFAULT_SORT_ORDER);
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
@@ -183,7 +183,7 @@ public class ItemListActivity extends ListActivity {
     private void deleteItem(long id) {
         int count = getContentResolver()
                 .delete(ContentUris.withAppendedId(
-                        GaranboItemsProvider.CONTENT_URI, id), null, null);
+                        GaranboItemsProvider.CONTENT_URI_ITEMS, id), null, null);
         if (count != 1) {
             Toast.makeText(this, R.string.toast_list_deleteerror,
                     Toast.LENGTH_LONG).show();

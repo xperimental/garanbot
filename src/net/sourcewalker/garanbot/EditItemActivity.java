@@ -69,7 +69,7 @@ public class EditItemActivity extends Activity {
             values.put(GaranbotDBMetaData.VENDOR, vendor);
 
             Uri uri = getContentResolver().insert(
-                    GaranboItemsProvider.CONTENT_URI, values);
+                    GaranboItemsProvider.CONTENT_URI_ITEMS, values);
             finish();
         }
     };

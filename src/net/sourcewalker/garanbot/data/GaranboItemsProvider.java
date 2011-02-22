@@ -20,8 +20,10 @@ import android.util.Log;
  */
 public class GaranboItemsProvider extends ContentProvider {
 
-    public static final Uri CONTENT_URI = Uri.parse("content://"
-            + GaranbotDBMetaData.AUTHORITY + "/items");
+    private static final Uri CONTENT_URI_BASE = Uri.parse("content://"
+            + GaranbotDBMetaData.AUTHORITY);
+    public static final Uri CONTENT_URI_ITEMS = Uri.withAppendedPath(
+            CONTENT_URI_BASE, "items");
 
     private static UriMatcher matcher;
     private GaranbotDBHelper dbHelper;
@@ -76,7 +78,7 @@ public class GaranboItemsProvider extends ContentProvider {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             db.insert(GaranbotDBMetaData.TABLE_NAME, GaranbotDBMetaData.STATUS,
                     values);
-            Uri numberUri = Uri.withAppendedPath(CONTENT_URI,
+            Uri numberUri = Uri.withAppendedPath(CONTENT_URI_ITEMS,
                     values.getAsString(GaranbotDBMetaData._ID));
             getContext().getContentResolver().notifyChange(numberUri, null);
             return numberUri;

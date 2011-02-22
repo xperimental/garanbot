@@ -74,7 +74,7 @@ public class ViewItemActivity extends Activity {
         }
 
         Cursor cursor = managedQuery(ContentUris.withAppendedId(
-                GaranboItemsProvider.CONTENT_URI, itemId),
+                GaranboItemsProvider.CONTENT_URI_ITEMS, itemId),
                 GaranbotDBMetaData.DEFAULT_PROJECTION, null, null, null);
         if (cursor.moveToFirst()) {
             Item dbItem;

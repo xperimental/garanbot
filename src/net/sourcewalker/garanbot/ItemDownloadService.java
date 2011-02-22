@@ -56,12 +56,12 @@ public class ItemDownloadService extends IntentService {
                 if (itemList.size() > 0) {
                     // Empty database
                     getContentResolver().delete(
-                            GaranboItemsProvider.CONTENT_URI, null, null);
+                            GaranboItemsProvider.CONTENT_URI_ITEMS, null, null);
                     for (Integer id : itemList) {
                         Item item = client.item().get(id);
                         ContentValues values = item.toContentValues();
                         getContentResolver().insert(
-                                GaranboItemsProvider.CONTENT_URI, values);
+                                GaranboItemsProvider.CONTENT_URI_ITEMS, values);
                     }
                 }
             } catch (ClientException e) {
