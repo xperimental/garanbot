@@ -1,5 +1,7 @@
 package net.sourcewalker.garanbot.data;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.HashMap;
 
 import android.content.ContentProvider;
@@ -10,6 +12,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
 /**
@@ -24,6 +27,8 @@ public class GaranboItemsProvider extends ContentProvider {
             + GaranbotDBMetaData.AUTHORITY);
     public static final Uri CONTENT_URI_ITEMS = Uri.withAppendedPath(
             CONTENT_URI_BASE, "items");
+    public static final Uri CONTENT_URI_IMAGES = Uri.withAppendedPath(
+            CONTENT_URI_BASE, "images");
 
     private static UriMatcher matcher;
     private GaranbotDBHelper dbHelper;
@@ -31,16 +36,21 @@ public class GaranboItemsProvider extends ContentProvider {
     private static final HashMap<String, String> projectionMap;
     private static final int MATCH_LIST = 1;
     private static final int MATCH_ITEM = 2;
+    private static final int MATCH_IMAGE = 3;
 
     static {
         matcher = new UriMatcher(UriMatcher.NO_MATCH);
         matcher.addURI(GaranbotDBMetaData.AUTHORITY, "items", MATCH_LIST);
         matcher.addURI(GaranbotDBMetaData.AUTHORITY, "items/#", MATCH_ITEM);
+        matcher.addURI(GaranbotDBMetaData.AUTHORITY, "images/#", MATCH_IMAGE);
 
         projectionMap = new HashMap<String, String>();
         for (String col : GaranbotDBMetaData.DEFAULT_PROJECTION) {
             projectionMap.put(col, col);
         }
+        projectionMap.put("image", "'" + CONTENT_URI_IMAGES
+                + "/' || _id as image");
+        projectionMap.put("_data", "'null' as _data");
     }
 
     @Override
@@ -137,6 +147,30 @@ public class GaranboItemsProvider extends ContentProvider {
                     new String[] { uri.getLastPathSegment() });
             getContext().getContentResolver().notifyChange(uri, null);
             return result;
+        default:
+            throw new IllegalArgumentException("Unknown URI: " + uri);
+        }
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.content.ContentProvider#openFile(android.net.Uri,
+     * java.lang.String)
+     */
+    @Override
+    public ParcelFileDescriptor openFile(Uri uri, String mode)
+            throws FileNotFoundException {
+        switch (matcher.match(uri)) {
+        case MATCH_IMAGE:
+            long itemId = ContentUris.parseId(uri);
+            File imageFile = ImageCache.getFile(getContext(), itemId);
+            if (imageFile.exists()) {
+            } else {
+                ImageDownloadService.downloadImage(getContext(), itemId);
+                imageFile = ImageCache.getDefaultImageFile(getContext());
+            }
+            return ParcelFileDescriptor.open(imageFile,
+                    ParcelFileDescriptor.MODE_READ_ONLY);
         default:
             throw new IllegalArgumentException("Unknown URI: " + uri);
         }

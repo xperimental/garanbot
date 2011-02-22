@@ -3,17 +3,12 @@ package net.sourcewalker.garanbot;
 import java.text.DateFormat;
 
 import net.sourcewalker.garanbot.api.ClientException;
-import net.sourcewalker.garanbot.api.GaranboClient;
 import net.sourcewalker.garanbot.api.Item;
 import net.sourcewalker.garanbot.data.GaranboItemsProvider;
 import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.ContentUris;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Window;
@@ -103,71 +98,9 @@ public class ViewItemActivity extends Activity {
         warrantyField.setText(dateFormat.format(source.getEndOfWarranty()));
         notesField.setText(source.getNotes());
         if (source.hasPicture()) {
-            GetPictureTask task = new GetPictureTask();
-            task.execute(source.getId());
+            imageView.setImageURI(ContentUris.withAppendedId(
+                    GaranboItemsProvider.CONTENT_URI_IMAGES, source.getId()));
         }
-    }
-
-    /**
-     * Direct download of item picture until ContentProvider can provide that
-     * data.
-     * 
-     * @author Xperimental
-     */
-    public class GetPictureTask extends AsyncTask<Integer, Void, Bitmap> {
-
-        /*
-         * (non-Javadoc)
-         * @see android.os.AsyncTask#onPreExecute()
-         */
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            setProgressBarIndeterminateVisibility(true);
-        }
-
-        /*
-         * (non-Javadoc)
-         * @see android.os.AsyncTask#doInBackground(Params[])
-         */
-        @Override
-        protected Bitmap doInBackground(Integer... params) {
-            int itemId = params[0];
-            AccountManager accountManager = AccountManager
-                    .get(ViewItemActivity.this);
-            Account[] accounts = accountManager
-                    .getAccountsByType(getString(R.string.account_type));
-            Bitmap result = null;
-            if (accounts.length > 0) {
-                String username = accounts[0].name;
-                String password = accountManager.getPassword(accounts[0]);
-                GaranboClient client = new GaranboClient(username, password);
-                try {
-                    result = client.item().getPicture(itemId);
-                } catch (ClientException e) {
-                    // display error
-                }
-            }
-            return result;
-        }
-
-        /*
-         * (non-Javadoc)
-         * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
-         */
-        @Override
-        protected void onPostExecute(Bitmap result) {
-            setProgressBarIndeterminateVisibility(false);
-            if (result != null) {
-                imageView.setImageBitmap(result);
-            } else {
-                Toast.makeText(ViewItemActivity.this,
-                        R.string.toast_view_pictureerror, Toast.LENGTH_LONG)
-                        .show();
-            }
-            super.onPostExecute(result);
-        }
-
     }
 
 }
