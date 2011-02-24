@@ -5,7 +5,7 @@
     android:versionCode="1"
     android:versionName="alpha-1">
     <application
-        android:icon="@drawable/icon"
+        android:icon="@drawable/ic_launcher_garanbot"
         android:label="@string/app_name">
         <activity
             android:name=".account.LoginActivity"
