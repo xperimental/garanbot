@@ -85,7 +85,7 @@ public class GaranboItemsProvider extends ContentProvider {
         switch (matcher.match(uri)) {
         case MATCH_LIST:
             SQLiteDatabase db = dbHelper.getWritableDatabase();
-            db.insert(GaranbotDBMetaData.TABLE_NAME, GaranbotDBMetaData.STATUS,
+            db.insert(GaranbotDBMetaData.TABLE_NAME, GaranbotDBMetaData.NAME,
                     values);
             Uri numberUri = Uri.withAppendedPath(CONTENT_URI_ITEMS,
                     values.getAsString(GaranbotDBMetaData._ID));

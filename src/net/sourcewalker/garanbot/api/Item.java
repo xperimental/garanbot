@@ -80,6 +80,16 @@ public class Item {
      */
     private Date endOfWarranty = new Date();
 
+    /**
+     * Date the Item was last modified.
+     */
+    private Date lastModified = new Date();
+
+    /**
+     * Where the Item was last modified.
+     */
+    private ModificationOrigin modifiedAt = ModificationOrigin.UNKNOWN;
+
     public int getId() {
         return id;
     }
@@ -164,6 +174,22 @@ public class Item {
         this.endOfWarranty = endOfWarranty;
     }
 
+    public Date getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(Date lastModified) {
+        this.lastModified = lastModified;
+    }
+
+    public ModificationOrigin getModifiedAt() {
+        return modifiedAt;
+    }
+
+    public void setModifiedAt(ModificationOrigin modifiedAt) {
+        this.modifiedAt = modifiedAt;
+    }
+
     public Item(int id) {
         this.id = id;
     }
@@ -221,6 +247,9 @@ public class Item {
                     .getInt("visibility")));
             result.setPurchaseDate(parseDate(object.getString("purchaseDate")));
             result.setEndOfWarranty(parseDate(object.getString("endOfWarranty")));
+            // TODO get date from server!
+            result.setLastModified(new Date());
+            result.setModifiedAt(ModificationOrigin.SERVER);
             return result;
         } catch (JSONException e) {
             throw new ClientException("Error parsing Item: " + e.getMessage(),
@@ -271,6 +300,10 @@ public class Item {
                     .getColumnIndexOrThrow(GaranbotDBMetaData.PURCHASEDATE))));
             result.setEndOfWarranty(parseDate(cursor.getString(cursor
                     .getColumnIndexOrThrow(GaranbotDBMetaData.ENDOFWARRANTY))));
+            result.setLastModified(parseDate(cursor.getString(cursor
+                    .getColumnIndexOrThrow(GaranbotDBMetaData.LAST_MODIFIED))));
+            result.setModifiedAt(ModificationOrigin.parseInt(cursor.getInt(cursor
+                    .getColumnIndexOrThrow(GaranbotDBMetaData.MODIFIED_AT))));
         } catch (IllegalArgumentException e) {
             throw new ClientException("Cursor data invalid: " + e.getMessage(),
                     e);
@@ -299,6 +332,9 @@ public class Item {
                 dateString(getPurchaseDate()));
         result.put(GaranbotDBMetaData.ENDOFWARRANTY,
                 dateString(getEndOfWarranty()));
+        result.put(GaranbotDBMetaData.LAST_MODIFIED,
+                dateString(getLastModified()));
+        result.put(GaranbotDBMetaData.MODIFIED_AT, getModifiedAt().getValue());
         return result;
     }
 

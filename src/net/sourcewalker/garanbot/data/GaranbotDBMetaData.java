@@ -17,8 +17,8 @@ public final class GaranbotDBMetaData implements BaseColumns {
     public static final String VISIBILITY = "visibility";
     public static final String PURCHASEDATE = "purchasedate";
     public static final String ENDOFWARRANTY = "endofwarranty";
-
-    public static final String STATUS = "status";
+    public static final String LAST_MODIFIED = "modified";
+    public static final String MODIFIED_AT = "origin";
 
     /**
      * This column is not actually stored in the database but instead only
@@ -32,11 +32,12 @@ public final class GaranbotDBMetaData implements BaseColumns {
             + " TEXT, " + ITEMTYPE + " TEXT, " + VENDOR + " TEXT, " + LOCATION
             + " TEXT, " + NOTES + " TEXT, " + HASPICTURE + " INTEGER, "
             + VISIBILITY + " INTEGER, " + PURCHASEDATE + " TEXT, "
-            + ENDOFWARRANTY + " TEXT);";
+            + ENDOFWARRANTY + " TEXT, " + LAST_MODIFIED + " TEXT, "
+            + MODIFIED_AT + " INTEGER);";
 
     public static final String[] DEFAULT_PROJECTION = new String[] { _ID, NAME,
             MANUFACTURER, ITEMTYPE, VENDOR, LOCATION, NOTES, HASPICTURE,
-            VISIBILITY, PURCHASEDATE, ENDOFWARRANTY };
+            VISIBILITY, PURCHASEDATE, ENDOFWARRANTY, LAST_MODIFIED, MODIFIED_AT };
 
     public static final String AUTHORITY = "net.sourcewalker.garanbot";
 
