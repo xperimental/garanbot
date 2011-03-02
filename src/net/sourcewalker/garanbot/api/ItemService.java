@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.json.JSONArray;
@@ -17,6 +18,8 @@ import android.util.Base64;
 import android.util.Base64InputStream;
 
 public class ItemService {
+
+    private static final String LAST_MODIFIED_HEADER = "Last-Modified";
 
     private final GaranboClient client;
 
@@ -57,7 +60,9 @@ public class ItemService {
             HttpResponse response = client.get("/item/" + id);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 String content = client.readEntity(response);
-                return Item.fromJSON(content);
+                Header lastModifiedHeader = response
+                        .getFirstHeader(LAST_MODIFIED_HEADER);
+                return Item.fromJSON(content, lastModifiedHeader.getValue());
             } else {
                 throw new ClientException("Got HTTP error: "
                         + response.getStatusLine().toString());

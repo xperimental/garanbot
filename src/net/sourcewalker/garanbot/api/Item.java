@@ -3,6 +3,7 @@ package net.sourcewalker.garanbot.api;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
 
@@ -22,8 +23,11 @@ public class Item {
 
     public static final int UNKNOWN_ID = -1;
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat(
+    private static final SimpleDateFormat JSON_DATE_FORMAT = new SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm:ssZ");
+
+    private static final SimpleDateFormat HTTP_DATE_FORMAT = new SimpleDateFormat(
+            "EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
 
     /**
      * Unique id of item. Assigned by Garanbo server and can not be changed.
@@ -218,7 +222,7 @@ public class Item {
     }
 
     private String dateString(Date date) {
-        String dateString = dateFormat.format(date);
+        String dateString = JSON_DATE_FORMAT.format(date);
         return dateString.substring(0, 22) + ":" + dateString.substring(22);
     }
 
@@ -227,11 +231,15 @@ public class Item {
      * 
      * @param content
      *            JSON content as String.
+     * @param lastModified
+     *            Value of last-modified-header if available or
+     *            <code>null</code> if current device time should be used.
      * @return Item object
      * @throws ClientException
      *             If the provided JSON is not valid.
      */
-    public static Item fromJSON(String content) throws ClientException {
+    public static Item fromJSON(String content, String lastModified)
+            throws ClientException {
         try {
             JSONObject object = (JSONObject) new JSONTokener(content)
                     .nextValue();
@@ -247,8 +255,17 @@ public class Item {
                     .getInt("visibility")));
             result.setPurchaseDate(parseDate(object.getString("purchaseDate")));
             result.setEndOfWarranty(parseDate(object.getString("endOfWarranty")));
-            // TODO get date from server!
-            result.setLastModified(new Date());
+            if (lastModified == null) {
+                result.setLastModified(new Date());
+            } else {
+                try {
+                    result.setLastModified(HTTP_DATE_FORMAT.parse(lastModified));
+                } catch (ParseException e) {
+                    throw new ClientException(
+                            "Error parsing Last-Modified header: "
+                                    + e.getMessage(), e);
+                }
+            }
             result.setModifiedAt(ModificationOrigin.SERVER);
             return result;
         } catch (JSONException e) {
@@ -259,7 +276,7 @@ public class Item {
 
     private static Date parseDate(String string) throws ClientException {
         try {
-            return dateFormat.parse(string);
+            return JSON_DATE_FORMAT.parse(string);
         } catch (ParseException e) {
             throw new ClientException("Error parsing date: " + e.getMessage(),
                     e);
