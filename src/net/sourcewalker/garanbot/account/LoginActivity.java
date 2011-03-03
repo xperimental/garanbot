@@ -4,9 +4,11 @@ import net.sourcewalker.garanbot.R;
 import net.sourcewalker.garanbot.api.ClientException;
 import net.sourcewalker.garanbot.api.GaranboClient;
 import net.sourcewalker.garanbot.api.User;
+import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
+import android.content.ContentResolver;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
@@ -99,6 +101,9 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
             result.putString(AccountManager.KEY_ACCOUNT_NAME, username);
             result.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
             setAccountAuthenticatorResult(result);
+
+            ContentResolver.setSyncAutomatically(account,
+                    GaranbotDBMetaData.AUTHORITY, true);
             finish();
         } else {
             Toast.makeText(this, R.string.toast_account_createfailed,
