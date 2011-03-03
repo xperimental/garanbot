@@ -31,7 +31,8 @@ public class ItemService {
         List<Integer> result = new ArrayList<Integer>();
         try {
             HttpResponse response = client.get("/item");
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == HttpStatus.SC_OK) {
                 String content = client.readEntity(response);
                 JSONObject jsonContent = (JSONObject) new JSONTokener(content)
                         .nextValue();
@@ -41,6 +42,8 @@ public class ItemService {
                     int refId = Integer.parseInt(refString.split("/")[1]);
                     result.add(refId);
                 }
+            } else if (statusCode == HttpStatus.SC_NOT_FOUND) {
+                // No items on server.
             } else {
                 throw new ClientException("Got HTTP error: "
                         + response.getStatusLine().toString());
