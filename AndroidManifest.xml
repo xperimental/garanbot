@@ -43,8 +43,6 @@
             android:authorities="net.sourcewalker.garanbot">
         </provider>
         <service
-            android:name=".ItemDownloadService" />
-        <service
             android:name=".data.ImageDownloadService" />
         <service
             android:name=".data.sync.SyncService"

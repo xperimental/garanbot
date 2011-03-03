@@ -11,6 +11,7 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.ListActivity;
+import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
@@ -51,8 +52,7 @@ public class ItemListActivity extends ListActivity {
 
         accountType = getString(R.string.account_type);
         accountManager = AccountManager.get(this);
-        Account[] accounts = accountManager.getAccountsByType(accountType);
-        if (accounts.length == 0) {
+        if (getAccount() == null) {
             startCreateAccount();
         }
 
@@ -69,6 +69,15 @@ public class ItemListActivity extends ListActivity {
                         GaranbotDBMetaData.IMAGE_URI }, new int[] {
                         R.id.firstLine, R.id.secondLine, R.id.icon });
         setListAdapter(adapter);
+    }
+
+    private Account getAccount() {
+        Account[] accounts = accountManager.getAccountsByType(accountType);
+        if (accounts.length == 0) {
+            return null;
+        } else {
+            return accounts[0];
+        }
     }
 
     /**
@@ -136,7 +145,11 @@ public class ItemListActivity extends ListActivity {
             startActivity(new Intent(this, EditItemActivity.class));
             break;
         case R.id.menu_load:
-            startService(new Intent(this, ItemDownloadService.class));
+            Account account = getAccount();
+            if (account != null) {
+                ContentResolver.requestSync(account,
+                        GaranbotDBMetaData.AUTHORITY, new Bundle());
+            }
             break;
         case R.id.menu_settings:
             startActivity(new Intent(this, SettingsActivity.class));
