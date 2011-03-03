@@ -1,6 +1,9 @@
 package net.sourcewalker.garanbot.account;
 
 import net.sourcewalker.garanbot.R;
+import net.sourcewalker.garanbot.api.AuthenticationException;
+import net.sourcewalker.garanbot.api.ClientException;
+import net.sourcewalker.garanbot.api.GaranboClient;
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
@@ -68,8 +71,20 @@ public class GaranboAuthenticator extends AbstractAccountAuthenticator {
     @Override
     public Bundle confirmCredentials(AccountAuthenticatorResponse response,
             Account account, Bundle options) throws NetworkErrorException {
-        // TODO Auto-generated method stub
-        return null;
+        String password = accountManager.getPassword(account);
+        GaranboClient client = new GaranboClient(account.name, password);
+        boolean success;
+        try {
+            client.user().get();
+            success = true;
+        } catch (AuthenticationException e) {
+            success = false;
+        } catch (ClientException e) {
+            throw new NetworkErrorException("Service not available!", e);
+        }
+        Bundle result = new Bundle();
+        result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, success);
+        return result;
     }
 
     /*

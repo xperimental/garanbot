@@ -14,8 +14,11 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EncodingUtils;
 
 import android.util.Base64;
+import android.util.Log;
 
 public class GaranboClient {
+
+    private static final String TAG = "GaranboClient";
 
     private final String username;
     private final String password;
@@ -45,6 +48,9 @@ public class GaranboClient {
                 return true;
             }
         } catch (IOException e) {
+        } catch (AuthenticationException e) {
+            // Ping should never give an authentication error!
+            Log.e(TAG, "Authentication error during ping!");
         }
         return false;
     }
@@ -57,10 +63,29 @@ public class GaranboClient {
         return itemService;
     }
 
-    protected HttpResponse get(String path) throws IOException {
+    protected HttpResponse get(String path) throws IOException,
+            AuthenticationException {
         HttpGet request = new HttpGet(ApiConstants.BASE + path);
         prepareRequest(request);
-        return client.execute(request);
+        HttpResponse response = client.execute(request);
+        checkAuthenticationError(response);
+        return response;
+    }
+
+    /**
+     * Check if the response contains an authentication error and throw
+     * exception if it does.
+     * 
+     * @param response
+     *            Response to check.
+     * @throws AuthenticationException
+     *             If response contains authentication error.
+     */
+    private void checkAuthenticationError(HttpResponse response)
+            throws AuthenticationException {
+        if (response.getStatusLine().getStatusCode() == HttpStatus.SC_FORBIDDEN) {
+            throw new AuthenticationException();
+        }
     }
 
     private void prepareRequest(HttpRequestBase request) {

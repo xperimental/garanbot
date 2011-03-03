@@ -1,8 +1,8 @@
 package net.sourcewalker.garanbot.data.sync;
 
-import java.io.IOException;
 import java.util.List;
 
+import net.sourcewalker.garanbot.api.AuthenticationException;
 import net.sourcewalker.garanbot.api.ClientException;
 import net.sourcewalker.garanbot.api.GaranboClient;
 import net.sourcewalker.garanbot.api.Item;
@@ -69,14 +69,12 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
                 // More complicated sync...
                 Log.d(TAG, "Both have content: have to sync...");
             }
+        } catch (AuthenticationException e) {
+            Log.e(TAG, "Authentication error.");
+            syncResult.stats.numAuthExceptions++;
         } catch (ClientException e) {
             Log.e(TAG, "Client exception: " + e);
-            Throwable cause = e.getCause();
-            if (cause instanceof IOException) {
-                syncResult.stats.numIoExceptions++;
-            } else {
-                syncResult.stats.numAuthExceptions++;
-            }
+            syncResult.stats.numIoExceptions++;
         } catch (RemoteException e) {
             Log.e(TAG, "DB exception: " + e);
             syncResult.stats.numIoExceptions++;
