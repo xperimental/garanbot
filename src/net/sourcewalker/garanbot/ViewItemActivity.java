@@ -99,7 +99,8 @@ public class ViewItemActivity extends Activity {
         notesField.setText(source.getNotes());
         if (source.hasPicture()) {
             imageView.setImageURI(ContentUris.withAppendedId(
-                    GaranboItemsProvider.CONTENT_URI_IMAGES, source.getId()));
+                    GaranboItemsProvider.CONTENT_URI_IMAGES,
+                    source.getServerId()));
         }
     }
 

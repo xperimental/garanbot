@@ -11,13 +11,17 @@ public enum ModificationOrigin {
      */
     UNKNOWN(0),
     /**
+     * Created on local client, never synchronized with server.
+     */
+    CREATED(1),
+    /**
      * Modified on local client.
      */
-    CLIENT(1),
+    MODIFIED_CLIENT(2),
     /**
      * Modification date provided from server.
      */
-    SERVER(2);
+    MODIFIED_SERVER(3);
 
     private int value;
 

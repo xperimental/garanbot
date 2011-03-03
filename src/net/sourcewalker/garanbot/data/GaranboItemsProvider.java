@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
 
+import net.sourcewalker.garanbot.api.Item;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
@@ -84,11 +85,16 @@ public class GaranboItemsProvider extends ContentProvider {
         Log.d(TAG, "insert");
         switch (matcher.match(uri)) {
         case MATCH_LIST:
+            if (values.containsKey(GaranbotDBMetaData._ID)) {
+                long valuesId = values.getAsLong(GaranbotDBMetaData._ID);
+                if (valuesId == Item.UNKNOWN_ID) {
+                    values.remove(GaranbotDBMetaData._ID);
+                }
+            }
             SQLiteDatabase db = dbHelper.getWritableDatabase();
-            db.insert(GaranbotDBMetaData.TABLE_NAME, GaranbotDBMetaData.NAME,
-                    values);
-            Uri numberUri = Uri.withAppendedPath(CONTENT_URI_ITEMS,
-                    values.getAsString(GaranbotDBMetaData._ID));
+            long id = db.insert(GaranbotDBMetaData.TABLE_NAME,
+                    GaranbotDBMetaData.NAME, values);
+            Uri numberUri = ContentUris.withAppendedId(CONTENT_URI_ITEMS, id);
             getContext().getContentResolver().notifyChange(numberUri, null);
             return numberUri;
         default:
@@ -162,11 +168,15 @@ public class GaranboItemsProvider extends ContentProvider {
         switch (matcher.match(uri)) {
         case MATCH_IMAGE:
             long itemId = ContentUris.parseId(uri);
-            File imageFile = ImageCache.getFile(getContext(), itemId);
-            if (imageFile.exists()) {
-            } else {
-                ImageDownloadService.downloadImage(getContext(), itemId);
+            File imageFile;
+            if (itemId == Item.UNKNOWN_ID) {
                 imageFile = ImageCache.getDefaultImageFile(getContext());
+            } else {
+                imageFile = ImageCache.getFile(getContext(), itemId);
+                if (!imageFile.exists()) {
+                    ImageDownloadService.downloadImage(getContext(), itemId);
+                    imageFile = ImageCache.getDefaultImageFile(getContext());
+                }
             }
             return ParcelFileDescriptor.open(imageFile,
                     ParcelFileDescriptor.MODE_READ_ONLY);

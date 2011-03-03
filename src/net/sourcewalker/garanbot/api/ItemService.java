@@ -112,7 +112,7 @@ public class ItemService {
 
     public int create(Item itemData) throws ClientException {
         try {
-            if (itemData.getId() != Item.UNKNOWN_ID) {
+            if (itemData.getServerId() != Item.UNKNOWN_ID) {
                 throw new ClientException(
                         "Can't create Item which already has an ID!");
             }
@@ -135,7 +135,7 @@ public class ItemService {
 
     public void update(Item itemData) throws ClientException {
         try {
-            if (itemData.getId() == Item.UNKNOWN_ID) {
+            if (itemData.getServerId() == Item.UNKNOWN_ID) {
                 throw new ClientException("Can't update Item with no ID!");
             }
             String jsonData = itemData.json().toString();

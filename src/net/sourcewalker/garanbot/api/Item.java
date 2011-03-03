@@ -30,9 +30,19 @@ public class Item {
             "EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
 
     /**
-     * Unique id of item. Assigned by Garanbo server and can not be changed.
+     * Unique id in database. This ID is assigned by the device database and is
+     * only {@link #UNKNOWN_ID} if the item is not saved to a database. Items
+     * with no local ID should only be used to create new items in the local
+     * database and then discarded.
      */
-    private final int id;
+    private final int localId;
+
+    /**
+     * Unique id on server. This ID is assigned by the Garanbo server and is
+     * {@link #UNKNOWN_ID} for local-only items ({@link #getModifiedAt()} is
+     * {@link ModificationOrigin#CREATED}).
+     */
+    private int serverId;
 
     /**
      * Displayname of item.
@@ -94,8 +104,16 @@ public class Item {
      */
     private ModificationOrigin modifiedAt = ModificationOrigin.UNKNOWN;
 
-    public int getId() {
-        return id;
+    public int getLocalId() {
+        return localId;
+    }
+
+    public int getServerId() {
+        return serverId;
+    }
+
+    public void setServerId(int serverId) {
+        this.serverId = serverId;
     }
 
     public String getName() {
@@ -195,14 +213,15 @@ public class Item {
     }
 
     public Item(int id) {
-        this.id = id;
+        this.localId = id;
+        this.serverId = UNKNOWN_ID;
     }
 
     public JSONObject json() throws ClientException {
         try {
             JSONObject result = new JSONObject();
-            if (getId() != UNKNOWN_ID) {
-                result.put("id", getId());
+            if (getServerId() != UNKNOWN_ID) {
+                result.put("id", getServerId());
             }
             result.put("name", getName());
             result.put("manufacturer", getManufacturer());
@@ -266,7 +285,7 @@ public class Item {
                                     + e.getMessage(), e);
                 }
             }
-            result.setModifiedAt(ModificationOrigin.SERVER);
+            result.setModifiedAt(ModificationOrigin.MODIFIED_SERVER);
             return result;
         } catch (JSONException e) {
             throw new ClientException("Error parsing Item: " + e.getMessage(),
@@ -321,6 +340,8 @@ public class Item {
                     .getColumnIndexOrThrow(GaranbotDBMetaData.LAST_MODIFIED))));
             result.setModifiedAt(ModificationOrigin.parseInt(cursor.getInt(cursor
                     .getColumnIndexOrThrow(GaranbotDBMetaData.MODIFIED_AT))));
+            result.setServerId(cursor.getInt(cursor
+                    .getColumnIndexOrThrow(GaranbotDBMetaData.SERVER_ID)));
         } catch (IllegalArgumentException e) {
             throw new ClientException("Cursor data invalid: " + e.getMessage(),
                     e);
@@ -336,7 +357,7 @@ public class Item {
      */
     public ContentValues toContentValues() {
         ContentValues result = new ContentValues();
-        result.put(GaranbotDBMetaData._ID, getId());
+        result.put(GaranbotDBMetaData._ID, getLocalId());
         result.put(GaranbotDBMetaData.NAME, getName());
         result.put(GaranbotDBMetaData.MANUFACTURER, getManufacturer());
         result.put(GaranbotDBMetaData.ITEMTYPE, getItemType());
@@ -352,6 +373,7 @@ public class Item {
         result.put(GaranbotDBMetaData.LAST_MODIFIED,
                 dateString(getLastModified()));
         result.put(GaranbotDBMetaData.MODIFIED_AT, getModifiedAt().getValue());
+        result.put(GaranbotDBMetaData.SERVER_ID, getServerId());
         return result;
     }
 
