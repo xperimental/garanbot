@@ -1,14 +1,14 @@
 package net.sourcewalker.garanbot;
 
 import java.util.Calendar;
+import java.util.Date;
 
+import net.sourcewalker.garanbot.api.Item;
+import net.sourcewalker.garanbot.api.ModificationOrigin;
 import net.sourcewalker.garanbot.data.GaranboItemsProvider;
-import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
-import android.content.ContentValues;
-import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -53,23 +53,23 @@ public class EditItemActivity extends Activity {
                     .getText().toString();
             String notes = ((EditText) findViewById(R.id.item_notes)).getText()
                     .toString();
-            String purchaseDate = ((Button) findViewById(R.id.item_purchasedate))
-                    .getText().toString();
             String vendor = ((EditText) findViewById(R.id.item_vendor))
                     .getText().toString();
 
-            ContentValues values = new ContentValues();
+            Item item = new Item(Item.UNKNOWN_ID);
+            item.setName(name);
+            item.setManufacturer(manufacturer);
+            item.setItemType(itemtype);
+            item.setLocation(location);
+            item.setNotes(notes);
+            item.setPurchaseDate(new Date(mYear - 1900, mMonth, mDay));
+            item.setVendor(vendor);
+            item.setEndOfWarranty(new Date(mYear - 1898, mMonth, mDay));
+            item.setLastModified(new Date());
+            item.setModifiedAt(ModificationOrigin.CREATED);
 
-            values.put(GaranbotDBMetaData.NAME, name);
-            values.put(GaranbotDBMetaData.MANUFACTURER, manufacturer);
-            values.put(GaranbotDBMetaData.ITEMTYPE, itemtype);
-            values.put(GaranbotDBMetaData.LOCATION, location);
-            values.put(GaranbotDBMetaData.NOTES, notes);
-            values.put(GaranbotDBMetaData.PURCHASEDATE, purchaseDate);
-            values.put(GaranbotDBMetaData.VENDOR, vendor);
-
-            Uri uri = getContentResolver().insert(
-                    GaranboItemsProvider.CONTENT_URI_ITEMS, values);
+            getContentResolver().insert(GaranboItemsProvider.CONTENT_URI_ITEMS,
+                    item.toContentValues());
             finish();
         }
     };
@@ -81,8 +81,8 @@ public class EditItemActivity extends Activity {
 
         @Override
         public void onClick(View arg0) {
-            // TODO Auto-generated method stub
-
+            // Just close activity.
+            finish();
         }
     };
 
