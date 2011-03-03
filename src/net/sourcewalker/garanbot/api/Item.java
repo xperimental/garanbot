@@ -229,8 +229,9 @@ public class Item {
             result.put("vendor", getVendor());
             result.put("location", getLocation());
             result.put("notes", getNotes());
-            result.put("hasPicture", hasPicture());
-            result.put("visibility", getVisibility().getValue());
+            result.put("hasPicture", Boolean.toString(hasPicture()));
+            result.put("visibility",
+                    Integer.toString(getVisibility().getValue()));
             result.put("purchaseDate", dateString(getPurchaseDate()));
             result.put("endOfWarranty", dateString(getEndOfWarranty()));
             return result;
