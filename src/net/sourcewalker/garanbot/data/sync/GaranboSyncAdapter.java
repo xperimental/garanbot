@@ -1,6 +1,7 @@
 package net.sourcewalker.garanbot.data.sync;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -163,7 +164,30 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
                 int localId = localIdList.get(0);
                 Item localItem = getLocalItem(provider, localId);
                 Item serverItem = client.item().get(serverId);
-                // TODO update old item
+                int compare = compareDates(localItem, serverItem);
+                if (compare == 0) {
+                    // Same modified date (treat as equal)
+                    Log.d(TAG, "  Same date -> equal.");
+                } else {
+                    if (compare < 0) {
+                        Log.d(TAG, "  Server newer.");
+                        provider.update(ContentUris
+                                .withAppendedId(
+                                        GaranboItemsProvider.CONTENT_URI_ITEMS,
+                                        localId), serverItem.toContentValues(),
+                                null, null);
+                    } else {
+                        Log.d(TAG, "  Local newer.");
+                        client.item().update(localItem);
+                        serverItem = client.item().get(serverId);
+                        provider.update(ContentUris
+                                .withAppendedId(
+                                        GaranboItemsProvider.CONTENT_URI_ITEMS,
+                                        localId), serverItem.toContentValues(),
+                                null, null);
+                    }
+                    syncResult.stats.numUpdates++;
+                }
             } else {
                 // Item is new...
                 Log.d(TAG, "  No local item. Creating...");
@@ -180,7 +204,6 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
             Log.d(TAG, "Deleting items not on server anymore...");
             int serverId = localIdMap.keySet().iterator().next();
             List<Integer> localIdList = localIdMap.remove(serverId);
-            client.item().delete(serverId);
             for (int localId : localIdList) {
                 provider.delete(ContentUris.withAppendedId(
                         GaranboItemsProvider.CONTENT_URI_ITEMS, localId), null,
@@ -189,6 +212,23 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
                 Log.d(TAG, "Deleted: " + localId);
             }
         }
+    }
+
+    /**
+     * Compare the modified dates of two items.
+     * 
+     * @param itemA
+     *            First item to compare.
+     * @param itemB
+     *            Second item to compare.
+     * @return <code>0</code> if items have equals dates. Positive if
+     *         <code>itemA</code> is newer, negative if <code>itemB</code> is
+     *         newer.
+     */
+    private int compareDates(Item itemA, Item itemB) {
+        Date modifiedA = itemA.getLastModified();
+        Date modifiedB = itemB.getLastModified();
+        return modifiedA.compareTo(modifiedB);
     }
 
     /**
