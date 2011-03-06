@@ -4,7 +4,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import net.sourcewalker.garanbot.api.Item;
-import net.sourcewalker.garanbot.api.ModificationOrigin;
 import net.sourcewalker.garanbot.data.GaranboItemsProvider;
 import android.app.Activity;
 import android.app.DatePickerDialog;
@@ -66,7 +65,6 @@ public class EditItemActivity extends Activity {
             item.setVendor(vendor);
             item.setEndOfWarranty(new Date(mYear - 1898, mMonth, mDay));
             item.setLastModified(new Date());
-            item.setModifiedAt(ModificationOrigin.CREATED);
 
             getContentResolver().insert(GaranboItemsProvider.CONTENT_URI_ITEMS,
                     item.toContentValues());

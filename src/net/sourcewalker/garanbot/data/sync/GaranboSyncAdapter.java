@@ -10,7 +10,6 @@ import net.sourcewalker.garanbot.api.AuthenticationException;
 import net.sourcewalker.garanbot.api.ClientException;
 import net.sourcewalker.garanbot.api.GaranboClient;
 import net.sourcewalker.garanbot.api.Item;
-import net.sourcewalker.garanbot.api.ModificationOrigin;
 import net.sourcewalker.garanbot.data.GaranboItemsProvider;
 import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
 import android.accounts.Account;
@@ -75,23 +74,15 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
                 Log.d(TAG, "Only local content. Copy to server...");
                 List<Item> localItems = getAllDbItems(provider);
                 for (Item item : localItems) {
-                    if (item.getModifiedAt() == ModificationOrigin.CREATED) {
-                        item.setServerId(Item.UNKNOWN_ID);
-                        int id = client.item().create(item);
-                        item.setServerId(id);
-                        provider.update(ContentUris.withAppendedId(
-                                GaranboItemsProvider.CONTENT_URI_ITEMS,
-                                item.getLocalId()), item.toContentValues(),
-                                null, null);
-                        Log.d(TAG, "Uploaded item: " + id);
-                        syncResult.stats.numInserts++;
-                    } else {
-                        provider.delete(ContentUris.withAppendedId(
-                                GaranboItemsProvider.CONTENT_URI_ITEMS,
-                                item.getLocalId()), null, null);
-                        Log.d(TAG, "Deleted invalid item: " + item.getName());
-                        syncResult.stats.numDeletes++;
-                    }
+                    item.setServerId(Item.UNKNOWN_ID);
+                    int id = client.item().create(item);
+                    item.setServerId(id);
+                    provider.update(ContentUris.withAppendedId(
+                            GaranboItemsProvider.CONTENT_URI_ITEMS,
+                            item.getLocalId()), item.toContentValues(), null,
+                            null);
+                    Log.d(TAG, "Uploaded item: " + id);
+                    syncResult.stats.numInserts++;
                 }
             } else {
                 // More complicated sync...

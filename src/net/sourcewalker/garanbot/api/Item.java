@@ -99,11 +99,6 @@ public class Item {
      */
     private Date lastModified = new Date();
 
-    /**
-     * Where the Item was last modified.
-     */
-    private ModificationOrigin modifiedAt = ModificationOrigin.UNKNOWN;
-
     public int getLocalId() {
         return localId;
     }
@@ -204,14 +199,6 @@ public class Item {
         this.lastModified = lastModified;
     }
 
-    public ModificationOrigin getModifiedAt() {
-        return modifiedAt;
-    }
-
-    public void setModifiedAt(ModificationOrigin modifiedAt) {
-        this.modifiedAt = modifiedAt;
-    }
-
     public Item(int id) {
         this.localId = id;
         this.serverId = UNKNOWN_ID;
@@ -286,7 +273,6 @@ public class Item {
                                     + e.getMessage(), e);
                 }
             }
-            result.setModifiedAt(ModificationOrigin.MODIFIED_SERVER);
             result.setServerId(object.getInt("id"));
             return result;
         } catch (JSONException e) {
@@ -340,8 +326,6 @@ public class Item {
                     .getColumnIndexOrThrow(GaranbotDBMetaData.ENDOFWARRANTY))));
             result.setLastModified(parseDate(cursor.getString(cursor
                     .getColumnIndexOrThrow(GaranbotDBMetaData.LAST_MODIFIED))));
-            result.setModifiedAt(ModificationOrigin.parseInt(cursor.getInt(cursor
-                    .getColumnIndexOrThrow(GaranbotDBMetaData.MODIFIED_AT))));
             result.setServerId(cursor.getInt(cursor
                     .getColumnIndexOrThrow(GaranbotDBMetaData.SERVER_ID)));
         } catch (IllegalArgumentException e) {
@@ -374,7 +358,6 @@ public class Item {
                 dateString(getEndOfWarranty()));
         result.put(GaranbotDBMetaData.LAST_MODIFIED,
                 dateString(getLastModified()));
-        result.put(GaranbotDBMetaData.MODIFIED_AT, getModifiedAt().getValue());
         result.put(GaranbotDBMetaData.SERVER_ID, getServerId());
         return result;
     }
