@@ -143,10 +143,12 @@ public class GaranboItemsProvider extends ContentProvider {
     }
 
     @Override
-    public int update(Uri uri, ContentValues values, String arg2, String[] arg3) {
+    public int update(Uri uri, ContentValues values, String selection,
+            String[] selectionArgs) {
         Log.d(TAG, "update");
         switch (matcher.match(uri)) {
         case MATCH_ITEM:
+            values.remove(GaranbotDBMetaData._ID);
             SQLiteDatabase db = dbHelper.getWritableDatabase();
             int result = db.update(GaranbotDBMetaData.TABLE_NAME, values,
                     GaranbotDBMetaData._ID + " == ?",

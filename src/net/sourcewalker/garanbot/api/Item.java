@@ -263,7 +263,7 @@ public class Item {
         try {
             JSONObject object = (JSONObject) new JSONTokener(content)
                     .nextValue();
-            Item result = new Item(object.getInt("id"));
+            Item result = new Item(Item.UNKNOWN_ID);
             result.setName(object.getString("name"));
             result.setManufacturer(object.getString("manufacturer"));
             result.setItemType(object.getString("itemType"));
@@ -287,6 +287,7 @@ public class Item {
                 }
             }
             result.setModifiedAt(ModificationOrigin.MODIFIED_SERVER);
+            result.setServerId(object.getInt("id"));
             return result;
         } catch (JSONException e) {
             throw new ClientException("Error parsing Item: " + e.getMessage(),
