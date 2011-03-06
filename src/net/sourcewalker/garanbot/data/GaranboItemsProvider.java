@@ -50,7 +50,8 @@ public class GaranboItemsProvider extends ContentProvider {
             projectionMap.put(col, col);
         }
         projectionMap.put(GaranbotDBMetaData.IMAGE_URI, "'"
-                + CONTENT_URI_IMAGES + "/' || _id as image");
+                + CONTENT_URI_IMAGES + "/' || " + GaranbotDBMetaData.SERVER_ID
+                + " as image");
     }
 
     @Override
