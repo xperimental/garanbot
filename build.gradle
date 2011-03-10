@@ -1,0 +1,28 @@
+repositories {
+  mavenCentral()
+}
+
+configurations {
+  pmd
+}
+
+dependencies {
+  pmd "pmd:pmd:4.2.5"
+}
+
+task pmd << {
+  ant {
+    taskdef(name:'pmd', classname:'net.sourceforge.pmd.ant.PMDTask', classpath: configurations.pmd.asPath)
+
+    pmd(shortFilenames:'true', failonruleviolation:'false', rulesetfiles:'ruleset.xml') {
+      formatter(type:'xml', toFile:'bin/pmd-report.xml')
+      fileset(dir: "src") {
+        include(name: '**/*.java')
+      }
+    }
+  }
+}
+
+task clean << {
+  ant.delete(file:'bin/pmd-report.xml')
+}
