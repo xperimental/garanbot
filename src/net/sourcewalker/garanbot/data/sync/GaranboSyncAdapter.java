@@ -12,6 +12,7 @@ import net.sourcewalker.garanbot.api.GaranboClient;
 import net.sourcewalker.garanbot.api.Item;
 import net.sourcewalker.garanbot.data.GaranboItemsProvider;
 import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
+import net.sourcewalker.garanbot.data.ImageCache;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
@@ -177,6 +178,7 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
                                         GaranboItemsProvider.CONTENT_URI_ITEMS,
                                         localId), serverItem.toContentValues(),
                                         null, null);
+                                ImageCache.deleteImage(getContext(), localId);
                             } else {
                                 Log.d(TAG, "  Local newer.");
                                 client.item().update(localItem);
