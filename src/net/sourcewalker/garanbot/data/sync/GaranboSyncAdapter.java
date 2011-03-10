@@ -154,32 +154,40 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
                 }
                 int localId = localIdList.get(0);
                 Item localItem = getLocalItem(provider, localId);
-                Item serverItem = client.item().getIfNewer(serverId,
-                        localItem.getLastModified());
-                if (serverItem == null) {
-                    Log.d(TAG, "  Server item not modified.");
+                if (localItem.isDeleted()) {
+                    Log.d(TAG, "  Deleted locally.");
+                    client.item().delete(serverId);
+                    provider.delete(ContentUris.withAppendedId(
+                            GaranboItemsProvider.CONTENT_URI_ITEMS, localId),
+                            null, null);
                 } else {
-                    int compare = compareDates(localItem, serverItem);
-                    if (compare == 0) {
-                        // Same modified date (treat as equal)
-                        Log.d(TAG, "  Same date -> equal.");
+                    Item serverItem = client.item().getIfNewer(serverId,
+                            localItem.getLastModified());
+                    if (serverItem == null) {
+                        Log.d(TAG, "  Server item not modified.");
                     } else {
-                        if (compare < 0) {
-                            Log.d(TAG, "  Server newer.");
-                            provider.update(ContentUris.withAppendedId(
-                                    GaranboItemsProvider.CONTENT_URI_ITEMS,
-                                    localId), serverItem.toContentValues(),
-                                    null, null);
+                        int compare = compareDates(localItem, serverItem);
+                        if (compare == 0) {
+                            // Same modified date (treat as equal)
+                            Log.d(TAG, "  Same date -> equal.");
                         } else {
-                            Log.d(TAG, "  Local newer.");
-                            client.item().update(localItem);
-                            serverItem = client.item().get(serverId);
-                            provider.update(ContentUris.withAppendedId(
-                                    GaranboItemsProvider.CONTENT_URI_ITEMS,
-                                    localId), serverItem.toContentValues(),
-                                    null, null);
+                            if (compare < 0) {
+                                Log.d(TAG, "  Server newer.");
+                                provider.update(ContentUris.withAppendedId(
+                                        GaranboItemsProvider.CONTENT_URI_ITEMS,
+                                        localId), serverItem.toContentValues(),
+                                        null, null);
+                            } else {
+                                Log.d(TAG, "  Local newer.");
+                                client.item().update(localItem);
+                                serverItem = client.item().get(serverId);
+                                provider.update(ContentUris.withAppendedId(
+                                        GaranboItemsProvider.CONTENT_URI_ITEMS,
+                                        localId), serverItem.toContentValues(),
+                                        null, null);
+                            }
+                            syncResult.stats.numUpdates++;
                         }
-                        syncResult.stats.numUpdates++;
                     }
                 }
             } else {
@@ -266,9 +274,10 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
     private Map<Integer, List<Integer>> getLocalIdMap(
             ContentProviderClient provider) throws RemoteException {
         Map<Integer, List<Integer>> idMap = new HashMap<Integer, List<Integer>>();
-        Cursor cursor = provider.query(GaranboItemsProvider.CONTENT_URI_ITEMS,
-                new String[] { GaranbotDBMetaData._ID,
-                        GaranbotDBMetaData.SERVER_ID }, null, null, null);
+        Cursor cursor = provider.query(
+                GaranboItemsProvider.CONTENT_URI_ITEMS_ALL, new String[] {
+                        GaranbotDBMetaData._ID, GaranbotDBMetaData.SERVER_ID },
+                null, null, null);
         while (cursor.moveToNext()) {
             int localId = cursor.getInt(0);
             int serverId = cursor.getInt(1);
@@ -295,7 +304,8 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
     private List<Item> getAllDbItems(ContentProviderClient provider)
             throws RemoteException, ClientException {
         List<Item> result = new ArrayList<Item>();
-        Cursor query = provider.query(GaranboItemsProvider.CONTENT_URI_ITEMS,
+        Cursor query = provider.query(
+                GaranboItemsProvider.CONTENT_URI_ITEMS_ALL,
                 GaranbotDBMetaData.DEFAULT_PROJECTION, null, null, null);
         while (query.moveToNext()) {
             Item item = Item.fromCursor(query);

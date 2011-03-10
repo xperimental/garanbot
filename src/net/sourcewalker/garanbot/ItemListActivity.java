@@ -2,6 +2,8 @@ package net.sourcewalker.garanbot;
 
 import java.io.IOException;
 
+import net.sourcewalker.garanbot.api.ClientException;
+import net.sourcewalker.garanbot.api.Item;
 import net.sourcewalker.garanbot.data.GaranboItemsProvider;
 import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
 import android.accounts.Account;
@@ -15,7 +17,9 @@ import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -37,6 +41,8 @@ import android.widget.Toast;
  * @author Xperimental
  */
 public class ItemListActivity extends ListActivity {
+
+    private static final String TAG = "ItemListActivity";
 
     private String accountType;
     private AccountManager accountManager;
@@ -197,12 +203,22 @@ public class ItemListActivity extends ListActivity {
      *            Id of item to delete.
      */
     private void deleteItem(long id) {
-        int count = getContentResolver()
-                .delete(ContentUris.withAppendedId(
-                        GaranboItemsProvider.CONTENT_URI_ITEMS, id), null, null);
-        if (count != 1) {
-            Toast.makeText(this, R.string.toast_list_deleteerror,
-                    Toast.LENGTH_LONG).show();
+        Uri itemUri = ContentUris.withAppendedId(
+                GaranboItemsProvider.CONTENT_URI_ITEMS, id);
+        Cursor cursor = managedQuery(itemUri, null, null, null, null);
+        try {
+            if (cursor.moveToFirst()) {
+                Item item = Item.fromCursor(cursor);
+                item.setDeleted(true);
+                int count = getContentResolver().update(itemUri,
+                        item.toContentValues(), null, null);
+                if (count != 1) {
+                    Toast.makeText(this, R.string.toast_list_deleteerror,
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        } catch (ClientException e) {
+            Log.e(TAG, "Error parsing item: " + e);
         }
     }
 

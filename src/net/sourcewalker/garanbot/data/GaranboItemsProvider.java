@@ -28,6 +28,8 @@ public class GaranboItemsProvider extends ContentProvider {
             + GaranbotDBMetaData.AUTHORITY);
     public static final Uri CONTENT_URI_ITEMS = Uri.withAppendedPath(
             CONTENT_URI_BASE, "items");
+    public static final Uri CONTENT_URI_ITEMS_ALL = Uri.withAppendedPath(
+            CONTENT_URI_ITEMS, "all");
     public static final Uri CONTENT_URI_IMAGES = Uri.withAppendedPath(
             CONTENT_URI_BASE, "images");
 
@@ -36,12 +38,15 @@ public class GaranboItemsProvider extends ContentProvider {
     private static final String TAG = "GaranbotProvider";
     private static final HashMap<String, String> projectionMap;
     private static final int MATCH_LIST = 1;
-    private static final int MATCH_ITEM = 2;
-    private static final int MATCH_IMAGE = 3;
+    private static final int MATCH_LIST_ALL = 2;
+    private static final int MATCH_ITEM = 3;
+    private static final int MATCH_IMAGE = 4;
 
     static {
         matcher = new UriMatcher(UriMatcher.NO_MATCH);
         matcher.addURI(GaranbotDBMetaData.AUTHORITY, "items", MATCH_LIST);
+        matcher.addURI(GaranbotDBMetaData.AUTHORITY, "items/all",
+                MATCH_LIST_ALL);
         matcher.addURI(GaranbotDBMetaData.AUTHORITY, "items/#", MATCH_ITEM);
         matcher.addURI(GaranbotDBMetaData.AUTHORITY, "images/#", MATCH_IMAGE);
 
@@ -127,7 +132,10 @@ public class GaranboItemsProvider extends ContentProvider {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         Cursor c;
         switch (matcher.match(uri)) {
+        case MATCH_LIST_ALL:
+            break;
         case MATCH_LIST:
+            query.appendWhere(GaranbotDBMetaData.DELETED + " == 0");
             break;
         case MATCH_ITEM:
             query.appendWhere(GaranbotDBMetaData._ID + " == "
