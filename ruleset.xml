@@ -22,7 +22,10 @@
     <rule ref="rulesets/imports.xml" />
     <rule ref="rulesets/junit.xml" />
     <rule ref="rulesets/controversial.xml" />
-    <rule ref="rulesets/naming.xml" />
+    <rule ref="rulesets/naming.xml">
+        <exclude name="LongVariable" />
+        <exclude name="ShortVariable" />
+    </rule>
     <rule ref="rulesets/codesize.xml" />
     <rule ref="rulesets/finalizers.xml" />
     <rule ref="rulesets/logging-jakarta-commons.xml" />
