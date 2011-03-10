@@ -80,4 +80,30 @@ public class ImageCache {
         stream.close();
     }
 
+    /**
+     * Delete an image from the cache.
+     * 
+     * @param context
+     *            Context to base path on.
+     * @param itemId
+     *            ID of item.
+     */
+    public static void deleteImage(Context context, int itemId) {
+        File file = getFile(context, itemId);
+        file.delete();
+    }
+
+    /**
+     * Clear all images from the cache.
+     * 
+     * @param context
+     *            Context to base path on.
+     */
+    public static void clearCache(Context context) {
+        File filesDir = context.getExternalFilesDir(null);
+        for (File image : filesDir.listFiles()) {
+            image.delete();
+        }
+    }
+
 }

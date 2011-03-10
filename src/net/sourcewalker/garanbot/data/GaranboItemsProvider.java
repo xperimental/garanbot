@@ -67,11 +67,14 @@ public class GaranboItemsProvider extends ContentProvider {
         switch (matcher.match(uri)) {
         case MATCH_LIST:
             result = db.delete(GaranbotDBMetaData.TABLE_NAME, null, null);
+            ImageCache.clearCache(getContext());
             break;
         case MATCH_ITEM:
             result = db.delete(GaranbotDBMetaData.TABLE_NAME,
                     GaranbotDBMetaData._ID + " == ?",
                     new String[] { uri.getLastPathSegment() });
+            ImageCache
+                    .deleteImage(getContext(), (int) ContentUris.parseId(uri));
             break;
         default:
             throw new IllegalArgumentException("Unknown URI: " + uri);

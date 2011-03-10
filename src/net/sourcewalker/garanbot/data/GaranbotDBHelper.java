@@ -27,6 +27,7 @@ public class GaranbotDBHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.w(TAG, "Upgrading database, which will destroy all old data.");
         db.execSQL("DROP TABLE IF EXISTS " + GaranbotDBMetaData.TABLE_NAME);
+        ImageCache.clearCache(context);
         onCreate(db);
     }
 
