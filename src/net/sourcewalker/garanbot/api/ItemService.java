@@ -12,8 +12,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import android.content.ContentUris;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.util.Base64;
 import android.util.Base64InputStream;
 
@@ -118,11 +120,12 @@ public class ItemService {
             }
             String jsonData = itemData.json().toString();
             HttpResponse response = client.put("/item", jsonData);
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                String responseContent = client.readEntity(response);
-                return Integer.parseInt(responseContent);
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
+                Header locationHeader = response.getFirstHeader("Location");
+                Uri itemUri = Uri.parse(locationHeader.getValue());
+                return (int) ContentUris.parseId(itemUri);
             } else {
-                throw new ClientException("Got HTTP error: "
+                throw new ClientException("Got HTTP status: "
                         + response.getStatusLine().toString());
             }
         } catch (IOException e) {
