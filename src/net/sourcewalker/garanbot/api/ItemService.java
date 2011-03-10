@@ -82,16 +82,19 @@ public class ItemService {
     public Bitmap getPicture(int id) throws ClientException {
         try {
             HttpResponse response = client.get("/item/" + id + "/picture");
-            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+            int statusCode = response.getStatusLine().getStatusCode();
+            switch (statusCode) {
+            case HttpStatus.SC_OK:
                 Base64InputStream stream = new Base64InputStream(response
                         .getEntity().getContent(), Base64.DEFAULT);
                 Bitmap result = BitmapFactory.decodeStream(stream);
-                if (result != null) {
-                    return result;
-                } else {
+                if (result == null) {
                     throw new ClientException("Picture could not be decoded!");
                 }
-            } else {
+                return result;
+            case HttpStatus.SC_NOT_FOUND:
+                return null;
+            default:
                 throw new ClientException("Got HTTP error: "
                         + response.getStatusLine().toString());
             }

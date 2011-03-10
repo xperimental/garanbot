@@ -6,12 +6,14 @@ import java.io.IOException;
 import net.sourcewalker.garanbot.R;
 import net.sourcewalker.garanbot.api.ClientException;
 import net.sourcewalker.garanbot.api.GaranboClient;
+import net.sourcewalker.garanbot.api.Item;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.IntentService;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.util.Log;
 
@@ -25,6 +27,8 @@ import android.util.Log;
 public class ImageDownloadService extends IntentService {
 
     private static final String TAG = "ImageDownloadService";
+
+    private AccountManager accountManager;
 
     /**
      * Starts the download of an image.
@@ -46,6 +50,17 @@ public class ImageDownloadService extends IntentService {
 
     /*
      * (non-Javadoc)
+     * @see android.app.IntentService#onCreate()
+     */
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        accountManager = AccountManager.get(this);
+    }
+
+    /*
+     * (non-Javadoc)
      * @see android.app.IntentService#onHandleIntent(android.content.Intent)
      */
     @Override
@@ -55,27 +70,54 @@ public class ImageDownloadService extends IntentService {
         if (cacheFile.exists()) {
             Log.d(TAG, "Duplicate download for: " + itemId);
         } else {
-            AccountManager accountManager = AccountManager.get(this);
-            Account[] accounts = accountManager
-                    .getAccountsByType(getString(R.string.account_type));
-            if (accounts.length == 0) {
-                Log.e(TAG, "No account to download from!");
-            } else {
-                String username = accounts[0].name;
-                String password = accountManager.getPassword(accounts[0]);
-                GaranboClient client = new GaranboClient(username, password);
-                try {
-                    Bitmap result = client.item().getPicture(itemId);
-                    ImageCache.saveImage(this, itemId, result);
-                    getContentResolver().notifyChange(
-                            ContentUris.withAppendedId(
-                                    GaranboItemsProvider.CONTENT_URI_ITEMS,
-                                    itemId), null);
-                } catch (ClientException e) {
-                    Log.e(TAG, "Error downloading image: " + e.getMessage());
-                } catch (IOException e) {
-                    Log.e(TAG, "IO Error while saving image: " + e.getMessage());
+            // Get item
+            Cursor cursor = getContentResolver().query(
+                    ContentUris.withAppendedId(
+                            GaranboItemsProvider.CONTENT_URI_ITEMS, itemId),
+                    null, null, null, null);
+            try {
+                if (cursor.moveToFirst()) {
+                    final Item item = Item.fromCursor(cursor);
+                    int serverId = item.getServerId();
+                    if (serverId == Item.UNKNOWN_ID) {
+                        Log.d(TAG,
+                                "Item not on server, so no picture available: "
+                                        + itemId);
+                    } else {
+                        Account[] accounts = accountManager
+                                .getAccountsByType(getString(R.string.account_type));
+                        if (accounts.length == 0) {
+                            Log.e(TAG, "No account to download from!");
+                        } else {
+                            String username = accounts[0].name;
+                            String password = accountManager
+                                    .getPassword(accounts[0]);
+                            GaranboClient client = new GaranboClient(username,
+                                    password);
+                            Bitmap result = client.item().getPicture(serverId);
+                            if (result == null) {
+                                Log.d(TAG, String.format(
+                                        "No picture on server for: %d (%d)",
+                                        serverId, itemId));
+                            } else {
+                                ImageCache.saveImage(this, itemId, result);
+                                getContentResolver()
+                                        .notifyChange(
+                                                ContentUris.withAppendedId(
+                                                        GaranboItemsProvider.CONTENT_URI_ITEMS,
+                                                        itemId), null);
+                            }
+                        }
+                    }
+                } else {
+                    Log.d(TAG, "Item not found in database: " + itemId);
                 }
+            } catch (ClientException e) {
+                Log.e(TAG, "Error communicating with server: " + e);
+            } catch (IOException e) {
+                Log.e(TAG, "Error saving picture: " + e);
+            } finally {
+                cursor.close();
             }
         }
     }

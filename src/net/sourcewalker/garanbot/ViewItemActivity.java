@@ -100,7 +100,7 @@ public class ViewItemActivity extends Activity {
         if (source.hasPicture()) {
             imageView.setImageURI(ContentUris.withAppendedId(
                     GaranboItemsProvider.CONTENT_URI_IMAGES,
-                    source.getServerId()));
+                    source.getLocalId()));
         }
     }
 
