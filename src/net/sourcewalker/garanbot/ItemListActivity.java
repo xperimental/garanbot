@@ -6,6 +6,7 @@ import net.sourcewalker.garanbot.api.ClientException;
 import net.sourcewalker.garanbot.api.Item;
 import net.sourcewalker.garanbot.data.GaranboItemsProvider;
 import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
+import net.sourcewalker.garanbot.data.sync.GaranboSyncAdapter;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
@@ -13,9 +14,12 @@ import android.accounts.AccountManagerFuture;
 import android.accounts.AuthenticatorException;
 import android.accounts.OperationCanceledException;
 import android.app.ListActivity;
+import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -25,6 +29,7 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -46,6 +51,7 @@ public class ItemListActivity extends ListActivity {
 
     private String accountType;
     private AccountManager accountManager;
+    private SyncStatusReceiver syncReceiver;
 
     /*
      * (non-Javadoc)
@@ -54,6 +60,7 @@ public class ItemListActivity extends ListActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         registerForContextMenu(getListView());
 
         accountType = getString(R.string.account_type);
@@ -61,6 +68,8 @@ public class ItemListActivity extends ListActivity {
         if (getAccount() == null) {
             startCreateAccount();
         }
+
+        syncReceiver = new SyncStatusReceiver();
 
         // query content provider to receive all garanbo items
         Cursor cursor = managedQuery(GaranboItemsProvider.CONTENT_URI_ITEMS,
@@ -75,6 +84,28 @@ public class ItemListActivity extends ListActivity {
                         GaranbotDBMetaData.IMAGE_URI }, new int[] {
                         R.id.firstLine, R.id.secondLine, R.id.icon });
         setListAdapter(adapter);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onResume()
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        syncReceiver.setEnabled(true);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onPause()
+     */
+    @Override
+    protected void onPause() {
+        syncReceiver.setEnabled(false);
+
+        super.onPause();
     }
 
     private Account getAccount() {
@@ -220,6 +251,37 @@ public class ItemListActivity extends ListActivity {
         } catch (ClientException e) {
             Log.e(TAG, "Error parsing item: " + e);
         }
+    }
+
+    private class SyncStatusReceiver extends BroadcastReceiver {
+
+        private final IntentFilter filter;
+
+        public SyncStatusReceiver() {
+            filter = new IntentFilter(GaranboSyncAdapter.BROADCAST_ACTION);
+        }
+
+        /*
+         * (non-Javadoc)
+         * @see
+         * android.content.BroadcastReceiver#onReceive(android.content.Context,
+         * android.content.Intent)
+         */
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            boolean running = intent.getExtras().getBoolean(
+                    GaranboSyncAdapter.EXTRA_RUNNING);
+            setProgressBarIndeterminateVisibility(running);
+        }
+
+        public void setEnabled(boolean value) {
+            if (value) {
+                registerReceiver(this, filter);
+            } else {
+                unregisterReceiver(this);
+            }
+        }
+
     }
 
 }

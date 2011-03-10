@@ -19,6 +19,7 @@ import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
 import android.content.ContentUris;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SyncResult;
 import android.database.Cursor;
 import android.net.Uri;
@@ -33,6 +34,9 @@ import android.util.Log;
  * @author Xperimental
  */
 public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
+
+    public static final String BROADCAST_ACTION = "net.sourcewalker.garanbot.broadcast.sync";
+    public static final String EXTRA_RUNNING = "running";
 
     private static final String TAG = "GaranboSyncAdapter";
 
@@ -55,6 +59,7 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle extras, String authority,
             ContentProviderClient provider, SyncResult syncResult) {
         Log.d(TAG, "Sync started.");
+        sendStatusBroadcast(true);
         String username = account.name;
         String password = accountManager.getPassword(account);
         GaranboClient client = new GaranboClient(username, password);
@@ -103,6 +108,13 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
             syncResult.stats.numIoExceptions++;
         }
         Log.d(TAG, "Sync ended.");
+        sendStatusBroadcast(false);
+    }
+
+    private void sendStatusBroadcast(boolean running) {
+        Intent intent = new Intent(BROADCAST_ACTION);
+        intent.putExtra(EXTRA_RUNNING, running);
+        getContext().sendBroadcast(intent);
     }
 
     /**
