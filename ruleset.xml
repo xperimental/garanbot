@@ -28,5 +28,8 @@
     <rule ref="rulesets/logging-jakarta-commons.xml" />
     <rule ref="rulesets/javabeans.xml" />
     <rule ref="rulesets/clone.xml" />
-    <rule ref="rulesets/android.xml" />
+    <rule ref="rulesets/android.xml">
+        <exclude name="ProtectLogD" />
+        <exclude name="ProtectLogV" />
+    </rule>
 </ruleset>
