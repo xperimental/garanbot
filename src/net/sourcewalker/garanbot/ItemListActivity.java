@@ -65,11 +65,23 @@ public class ItemListActivity extends ListActivity {
 
         accountType = getString(R.string.account_type);
         accountManager = AccountManager.get(this);
+
+        syncReceiver = new SyncStatusReceiver();
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onResume()
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        syncReceiver.setEnabled(true);
+
         if (getAccount() == null) {
             startCreateAccount();
         }
-
-        syncReceiver = new SyncStatusReceiver();
 
         // query content provider to receive all garanbo items
         Cursor cursor = managedQuery(GaranboItemsProvider.CONTENT_URI_ITEMS,
@@ -84,17 +96,6 @@ public class ItemListActivity extends ListActivity {
                         GaranbotDBMetaData.IMAGE_URI }, new int[] {
                         R.id.firstLine, R.id.secondLine, R.id.icon });
         setListAdapter(adapter);
-    }
-
-    /*
-     * (non-Javadoc)
-     * @see android.app.Activity#onResume()
-     */
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        syncReceiver.setEnabled(true);
     }
 
     /*

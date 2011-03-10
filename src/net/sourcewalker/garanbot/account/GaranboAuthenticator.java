@@ -4,6 +4,7 @@ import net.sourcewalker.garanbot.R;
 import net.sourcewalker.garanbot.api.AuthenticationException;
 import net.sourcewalker.garanbot.api.ClientException;
 import net.sourcewalker.garanbot.api.GaranboClient;
+import net.sourcewalker.garanbot.data.GaranboItemsProvider;
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
@@ -154,6 +155,23 @@ public class GaranboAuthenticator extends AbstractAccountAuthenticator {
             throws NetworkErrorException {
         // TODO Auto-generated method stub
         return null;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see
+     * android.accounts.AbstractAccountAuthenticator#getAccountRemovalAllowed
+     * (android.accounts.AccountAuthenticatorResponse, android.accounts.Account)
+     */
+    @Override
+    public Bundle getAccountRemovalAllowed(
+            AccountAuthenticatorResponse response, Account account)
+            throws NetworkErrorException {
+        context.getContentResolver().delete(
+                GaranboItemsProvider.CONTENT_URI_ITEMS, null, null);
+        final Bundle result = new Bundle();
+        result.putBoolean(AccountManager.KEY_BOOLEAN_RESULT, true);
+        return result;
     }
 
 }
