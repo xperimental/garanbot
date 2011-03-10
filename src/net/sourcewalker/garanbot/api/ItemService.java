@@ -2,11 +2,13 @@ package net.sourcewalker.garanbot.api;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
+import org.apache.http.message.BasicHeader;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -64,10 +66,7 @@ public class ItemService {
         try {
             HttpResponse response = client.get("/item/" + id);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                String content = client.readEntity(response);
-                Header lastModifiedHeader = response
-                        .getFirstHeader(LAST_MODIFIED_HEADER);
-                return Item.fromJSON(content, lastModifiedHeader.getValue());
+                return getItemFromResponse(response);
             } else {
                 throw new ClientException("Got HTTP error: "
                         + response.getStatusLine().toString());
@@ -76,6 +75,44 @@ public class ItemService {
             throw new ClientException("IO error: " + e.getMessage(), e);
         } catch (NumberFormatException e) {
             throw new ClientException("Error parsing id: " + e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Create an Item object from a HTTP response.
+     * 
+     * @param response
+     *            Response to parse.
+     * @return Item object parsed from response.
+     * @throws ClientException
+     *             If there was an error parsing the Item.
+     */
+    private Item getItemFromResponse(final HttpResponse response)
+            throws ClientException {
+        final String content = client.readEntity(response);
+        final Header lastModifiedHeader = response
+                .getFirstHeader(LAST_MODIFIED_HEADER);
+        return Item.fromJSON(content, lastModifiedHeader.getValue());
+    }
+
+    public Item getIfNewer(final int itemId, final Date modifiedDate)
+            throws ClientException {
+        try {
+            Header[] headers = new Header[] { new BasicHeader(
+                    "If-Modified-Since",
+                    ApiConstants.HTTP_DATE_FORMAT.format(modifiedDate)) };
+            HttpResponse response = client.get("/item/" + itemId, headers);
+            switch (response.getStatusLine().getStatusCode()) {
+            case HttpStatus.SC_OK:
+                return getItemFromResponse(response);
+            case HttpStatus.SC_NOT_MODIFIED:
+                return null;
+            default:
+                throw new ClientException("Got HTTP status: "
+                        + response.getStatusLine().toString());
+            }
+        } catch (IOException e) {
+            throw new ClientException("IO error: " + e.getMessage(), e);
         }
     }
 

@@ -3,7 +3,6 @@ package net.sourcewalker.garanbot.api;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
 
@@ -25,9 +24,6 @@ public class Item {
 
     private static final SimpleDateFormat JSON_DATE_FORMAT = new SimpleDateFormat(
             "yyyy-MM-dd'T'HH:mm:ssZ");
-
-    private static final SimpleDateFormat HTTP_DATE_FORMAT = new SimpleDateFormat(
-            "EEE, dd MMM yyyy HH:mm:ss zzz", Locale.ENGLISH);
 
     /**
      * Unique id in database. This ID is assigned by the device database and is
@@ -266,7 +262,8 @@ public class Item {
                 result.setLastModified(new Date());
             } else {
                 try {
-                    result.setLastModified(HTTP_DATE_FORMAT.parse(lastModified));
+                    result.setLastModified(ApiConstants.HTTP_DATE_FORMAT
+                            .parse(lastModified));
                 } catch (ParseException e) {
                     throw new ClientException(
                             "Error parsing Last-Modified header: "

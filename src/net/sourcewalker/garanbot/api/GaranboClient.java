@@ -3,6 +3,7 @@ package net.sourcewalker.garanbot.api;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.methods.HttpDelete;
@@ -65,8 +66,13 @@ public class GaranboClient {
 
     protected HttpResponse get(String path) throws IOException,
             AuthenticationException {
+        return get(path, new Header[0]);
+    }
+
+    protected HttpResponse get(String path, Header[] additionalHeaders)
+            throws IOException, AuthenticationException {
         HttpGet request = new HttpGet(ApiConstants.BASE + path);
-        prepareRequest(request);
+        prepareRequest(request, additionalHeaders);
         HttpResponse response = client.execute(request);
         checkAuthenticationError(response);
         return response;
@@ -89,9 +95,17 @@ public class GaranboClient {
     }
 
     private void prepareRequest(HttpRequestBase request) {
+        prepareRequest(request, new Header[0]);
+    }
+
+    private void prepareRequest(HttpRequestBase request,
+            Header[] additionalHeaders) {
         request.addHeader("Content-type", "application/json");
         request.addHeader("open-api", ApiConstants.KEY);
         request.addHeader("Authorization", getAuthHeader());
+        for (Header h : additionalHeaders) {
+            request.addHeader(h);
+        }
     }
 
     private String getAuthHeader() {
