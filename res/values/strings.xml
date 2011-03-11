@@ -46,4 +46,5 @@
     <string name="item_view_notes">Notes</string>
     <string name="toast_list_deleteerror">Error deleting item!</string>
     <string name="list_empty">No items on device! Please synchronize with server or create an item...</string>
+    <string name="list_warnsync">Sync is disabled! Please enable it...</string>
 </resources>

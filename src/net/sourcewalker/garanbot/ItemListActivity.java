@@ -33,6 +33,7 @@ import android.view.Window;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 /**
@@ -52,13 +53,14 @@ public class ItemListActivity extends ListActivity {
     private String accountType;
     private AccountManager accountManager;
     private SyncStatusReceiver syncReceiver;
+    private TextView syncWarning;
 
     /*
      * (non-Javadoc)
      * @see android.app.Activity#onCreate(android.os.Bundle)
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 
@@ -69,6 +71,7 @@ public class ItemListActivity extends ListActivity {
         accountManager = AccountManager.get(this);
 
         syncReceiver = new SyncStatusReceiver();
+        syncWarning = (TextView) findViewById(R.id.list_warnsync);
     }
 
     /*
@@ -81,17 +84,23 @@ public class ItemListActivity extends ListActivity {
 
         syncReceiver.setEnabled(true);
 
-        if (getAccount() == null) {
+        final Account account = getAccount();
+        if (account == null) {
             startCreateAccount();
+        } else {
+            final boolean syncEnabled = ContentResolver.getSyncAutomatically(
+                    account, GaranbotDBMetaData.AUTHORITY);
+            syncWarning.setVisibility(syncEnabled ? View.GONE : View.VISIBLE);
         }
 
         // query content provider to receive all garanbo items
-        Cursor cursor = managedQuery(GaranboItemsProvider.CONTENT_URI_ITEMS,
-                new String[] { GaranbotDBMetaData._ID, GaranbotDBMetaData.NAME,
+        final Cursor cursor = managedQuery(
+                GaranboItemsProvider.CONTENT_URI_ITEMS, new String[] {
+                        GaranbotDBMetaData._ID, GaranbotDBMetaData.NAME,
                         GaranbotDBMetaData.MANUFACTURER,
                         GaranbotDBMetaData.IMAGE_URI }, null, null,
                 GaranbotDBMetaData.DEFAULT_SORT_ORDER);
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
+        final SimpleCursorAdapter adapter = new SimpleCursorAdapter(this,
                 R.layout.list_item, cursor, new String[] {
                         GaranbotDBMetaData.NAME,
                         GaranbotDBMetaData.MANUFACTURER,
@@ -112,7 +121,8 @@ public class ItemListActivity extends ListActivity {
     }
 
     private Account getAccount() {
-        Account[] accounts = accountManager.getAccountsByType(accountType);
+        final Account[] accounts = accountManager
+                .getAccountsByType(accountType);
         if (accounts.length == 0) {
             return null;
         } else {
@@ -124,10 +134,10 @@ public class ItemListActivity extends ListActivity {
      * Requests the creation of a new account in the account manager.
      */
     private void startCreateAccount() {
-        AccountManagerCallback<Bundle> callback = new AccountManagerCallback<Bundle>() {
+        final AccountManagerCallback<Bundle> callback = new AccountManagerCallback<Bundle>() {
 
             @Override
-            public void run(AccountManagerFuture<Bundle> future) {
+            public void run(final AccountManagerFuture<Bundle> future) {
                 boolean created = false;
                 try {
                     Bundle result = future.getResult();
@@ -159,7 +169,7 @@ public class ItemListActivity extends ListActivity {
      */
     @Override
     protected void onListItemClick(ListView l, View v, int position, long id) {
-        Intent viewIntent = new Intent(this, ViewItemActivity.class);
+        final Intent viewIntent = new Intent(this, ViewItemActivity.class);
         viewIntent.setAction(Long.toString(id));
         startActivity(viewIntent);
     }
@@ -169,7 +179,7 @@ public class ItemListActivity extends ListActivity {
      * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
      */
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    public boolean onCreateOptionsMenu(final Menu menu) {
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
     }
@@ -179,7 +189,7 @@ public class ItemListActivity extends ListActivity {
      * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
      */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(final MenuItem item) {
         switch (item.getItemId()) {
         case R.id.menu_add:
             startActivity(new Intent(this, EditItemActivity.class));
