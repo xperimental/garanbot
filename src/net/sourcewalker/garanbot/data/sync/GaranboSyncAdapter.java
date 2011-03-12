@@ -340,7 +340,8 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
      */
     private int getDbCount(ContentProviderClient provider)
             throws RemoteException {
-        Cursor query = provider.query(GaranboItemsProvider.CONTENT_URI_ITEMS,
+        Cursor query = provider.query(
+                GaranboItemsProvider.CONTENT_URI_ITEMS_ALL,
                 new String[] { GaranbotDBMetaData._ID }, null, null, null);
         int result = query.getCount();
         query.close();
