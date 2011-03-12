@@ -40,11 +40,21 @@ public class ItemService {
                 String content = client.readEntity(response);
                 JSONObject jsonContent = (JSONObject) new JSONTokener(content)
                         .nextValue();
-                JSONArray refArray = jsonContent.getJSONArray("ref");
-                for (int i = 0; i < refArray.length(); i++) {
-                    String refString = refArray.getString(i);
-                    int refId = Integer.parseInt(refString.split("/")[1]);
-                    result.add(refId);
+                JSONArray refArray = jsonContent.optJSONArray("ref");
+                if (refArray == null) {
+                    String ref = jsonContent.optString("ref");
+                    if (ref == null) {
+                        throw new ClientException(
+                                "No valid ref element found: " + content);
+                    } else {
+                        result.add(Integer.parseInt(ref.split("/")[1]));
+                    }
+                } else {
+                    for (int i = 0; i < refArray.length(); i++) {
+                        String refString = refArray.getString(i);
+                        int refId = Integer.parseInt(refString.split("/")[1]);
+                        result.add(refId);
+                    }
                 }
             } else if (statusCode == HttpStatus.SC_NOT_FOUND) {
                 // No items on server.
