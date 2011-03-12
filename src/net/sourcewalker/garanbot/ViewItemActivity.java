@@ -8,9 +8,12 @@ import net.sourcewalker.garanbot.data.GaranboItemsProvider;
 import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
 import android.app.Activity;
 import android.content.ContentUris;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -102,6 +105,35 @@ public class ViewItemActivity extends Activity {
                     GaranboItemsProvider.CONTENT_URI_IMAGES,
                     source.getLocalId()));
         }
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+     */
+    @Override
+    public boolean onCreateOptionsMenu(final Menu menu) {
+        getMenuInflater().inflate(R.menu.view_options, menu);
+        return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+        case R.id.view_edit:
+            final Intent editIntent = new Intent(this, EditItemActivity.class);
+            editIntent.setAction(ContentUris.withAppendedId(
+                    GaranboItemsProvider.CONTENT_URI_ITEMS, itemId).toString());
+            startActivityForResult(editIntent, 0);
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown menu item: " + item);
+        }
+        return true;
     }
 
 }
