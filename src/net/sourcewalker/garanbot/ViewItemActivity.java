@@ -10,6 +10,7 @@ import android.app.Activity;
 import android.content.ContentUris;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -125,10 +126,15 @@ public class ViewItemActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
         case R.id.view_edit:
+            final Uri itemUri = ContentUris.withAppendedId(
+                    GaranboItemsProvider.CONTENT_URI_ITEMS, itemId);
             final Intent editIntent = new Intent(this, EditItemActivity.class);
-            editIntent.setAction(ContentUris.withAppendedId(
-                    GaranboItemsProvider.CONTENT_URI_ITEMS, itemId).toString());
+            editIntent.setAction(itemUri.toString());
             startActivityForResult(editIntent, 0);
+            break;
+        case R.id.view_delete:
+            ItemUtilities.deleteItem(this, itemId);
+            finish();
             break;
         default:
             throw new IllegalArgumentException("Unknown menu item: " + item);

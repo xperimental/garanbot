@@ -2,8 +2,6 @@ package net.sourcewalker.garanbot;
 
 import java.io.IOException;
 
-import net.sourcewalker.garanbot.api.ClientException;
-import net.sourcewalker.garanbot.api.Item;
 import net.sourcewalker.garanbot.data.GaranboItemsProvider;
 import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
 import net.sourcewalker.garanbot.data.sync.GaranboSyncAdapter;
@@ -16,14 +14,11 @@ import android.accounts.OperationCanceledException;
 import android.app.ListActivity;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -231,39 +226,13 @@ public class ItemListActivity extends ListActivity {
         case R.id.menu_delete:
             if (menuInfo instanceof AdapterContextMenuInfo) {
                 AdapterContextMenuInfo adapterInfo = (AdapterContextMenuInfo) menuInfo;
-                deleteItem(adapterInfo.id);
+                ItemUtilities.deleteItem(this, adapterInfo.id);
             }
             break;
         default:
             throw new IllegalArgumentException("Unknown menu item: " + item);
         }
         return true;
-    }
-
-    /**
-     * Delete the selected item from the local database.
-     * 
-     * @param id
-     *            Id of item to delete.
-     */
-    private void deleteItem(long id) {
-        Uri itemUri = ContentUris.withAppendedId(
-                GaranboItemsProvider.CONTENT_URI_ITEMS, id);
-        Cursor cursor = managedQuery(itemUri, null, null, null, null);
-        try {
-            if (cursor.moveToFirst()) {
-                Item item = Item.fromCursor(cursor);
-                item.setDeleted(true);
-                int count = getContentResolver().update(itemUri,
-                        item.toContentValues(), null, null);
-                if (count != 1) {
-                    Toast.makeText(this, R.string.toast_list_deleteerror,
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        } catch (ClientException e) {
-            Log.e(TAG, "Error parsing item: " + e);
-        }
     }
 
     private class SyncStatusReceiver extends BroadcastReceiver {

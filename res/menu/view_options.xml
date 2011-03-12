@@ -5,4 +5,8 @@
         android:id="@+id/view_edit"
         android:title="@string/view_edit"
         android:icon="@drawable/ic_menu_edit" />
+    <item
+        android:id="@+id/view_delete"
+        android:title="@string/menu_delete"
+        android:icon="@drawable/ic_menu_delete" />
 </menu>
