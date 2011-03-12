@@ -188,6 +188,7 @@ public class EditItemActivity extends Activity {
             saveItem();
             break;
         case R.id.edit_cancel:
+            setResult(RESULT_CANCELED);
             finish();
             break;
         default:
@@ -225,6 +226,7 @@ public class EditItemActivity extends Activity {
             getContentResolver().insert(GaranboItemsProvider.CONTENT_URI_ITEMS,
                     item.toContentValues());
         }
+        setResult(RESULT_OK);
         finish();
     }
 

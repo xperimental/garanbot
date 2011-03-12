@@ -30,6 +30,8 @@ import android.widget.Toast;
 public class ViewItemActivity extends Activity {
 
     private static final String TAG = "ViewItemActivity";
+    private static final int REQUEST_EDIT = 100;
+
     private long itemId;
     private ImageView imageView;
     private TextView nameField;
@@ -72,6 +74,13 @@ public class ViewItemActivity extends Activity {
             finish();
         }
 
+        loadData();
+    }
+
+    /**
+     * Load the item data from database.
+     */
+    private void loadData() {
         Cursor cursor = managedQuery(ContentUris.withAppendedId(
                 GaranboItemsProvider.CONTENT_URI_ITEMS, itemId),
                 GaranbotDBMetaData.DEFAULT_PROJECTION, null, null, null);
@@ -130,7 +139,7 @@ public class ViewItemActivity extends Activity {
                     GaranboItemsProvider.CONTENT_URI_ITEMS, itemId);
             final Intent editIntent = new Intent(this, EditItemActivity.class);
             editIntent.setAction(itemUri.toString());
-            startActivityForResult(editIntent, 0);
+            startActivityForResult(editIntent, REQUEST_EDIT);
             break;
         case R.id.view_delete:
             ItemUtilities.deleteItem(this, itemId);
@@ -140,6 +149,21 @@ public class ViewItemActivity extends Activity {
             throw new IllegalArgumentException("Unknown menu item: " + item);
         }
         return true;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onActivityResult(int, int,
+     * android.content.Intent)
+     */
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+        case REQUEST_EDIT:
+            loadData();
+            break;
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
 }
