@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="fill_parent"
+    android:layout_width="fill_parent">
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="fill_parent"
+        android:orientation="vertical">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/ViewItemBackground">
+            <ImageView
+                android:id="@+id/item_edit_image"
+                android:layout_width="96dip"
+                android:layout_height="96dip"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentLeft="true"
+                android:padding="8dip"
+                android:src="@drawable/item_nopicture" />
+            <EditText
+                android:text="Name"
+                android:id="@+id/item_edit_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/item_edit_image"
+                android:layout_alignBottom="@id/item_edit_image"
+                android:layout_alignParentRight="true"
+                android:padding="10dip"
+                android:textSize="12pt"
+                android:typeface="serif" />
+        </RelativeLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="10dip"
+            android:background="@drawable/bottom_gradient" />
+        <TableLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:stretchColumns="1">
+            <TableRow
+                style="@style/ViewItemHeader">
+                <TextView
+                    style="@style/ViewItemHeaderText"
+                    android:text="@string/item_view_details" />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dip"
+                    android:layout_span="2"
+                    android:background="@drawable/top_gradient" />
+            </TableRow>
+            <TableRow
+                style="@style/ViewItemRow">
+                <TextView
+                    style="@style/ViewItemRowHeader"
+                    android:text="@string/item_view_manufacturer" />
+                <EditText
+                    style="@style/EditItemRowData"
+                    android:id="@+id/item_edit_manufacturer"
+                    android:inputType="textMultiLine"
+                    android:text="Manufacturer" />
+            </TableRow>
+            <TableRow
+                style="@style/ViewItemRow">
+                <TextView
+                    style="@style/ViewItemRowHeader"
+                    android:text="@string/item_view_model" />
+                <EditText
+                    style="@style/EditItemRowData"
+                    android:text="Model"
+                    android:id="@+id/item_edit_model" />
+            </TableRow>
+            <TableRow
+                style="@style/ViewItemRow">
+                <TextView
+                    style="@style/ViewItemRowHeader"
+                    android:text="@string/item_view_location" />
+                <EditText
+                    style="@style/EditItemRowData"
+                    android:text="Location"
+                    android:id="@+id/item_edit_location" />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dip"
+                    android:layout_span="2"
+                    android:background="@drawable/bottom_gradient" />
+            </TableRow>
+            <TableRow
+                style="@style/ViewItemHeader">
+                <TextView
+                    style="@style/ViewItemHeaderText"
+                    android:text="@string/item_view_warranty" />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dip"
+                    android:layout_span="2"
+                    android:background="@drawable/top_gradient" />
+            </TableRow>
+            <TableRow
+                style="@style/ViewItemRow">
+                <TextView
+                    style="@style/ViewItemRowHeader"
+                    android:text="@string/item_view_vendor" />
+                <EditText
+                    style="@style/EditItemRowData"
+                    android:text="Vendor"
+                    android:id="@+id/item_edit_vendor" />
+            </TableRow>
+            <TableRow
+                style="@style/ViewItemRow">
+                <TextView
+                    style="@style/ViewItemRowHeader"
+                    android:text="@string/item_view_purchase" />
+                <Button
+                    style="@style/EditItemRowData"
+                    android:text="Purchase Date"
+                    android:id="@+id/item_edit_purchase" />
+            </TableRow>
+            <TableRow
+                style="@style/ViewItemRow">
+                <TextView
+                    style="@style/ViewItemRowHeader"
+                    android:text="@string/item_view_endwarranty" />
+                <Button
+                    style="@style/EditItemRowData"
+                    android:text="End of warranty"
+                    android:id="@+id/item_edit_endwarranty" />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dip"
+                    android:layout_span="2"
+                    android:background="@drawable/bottom_gradient" />
+            </TableRow>
+            <TableRow
+                style="@style/ViewItemHeader">
+                <TextView
+                    style="@style/ViewItemHeaderText"
+                    android:text="@string/item_view_notes" />
+            </TableRow>
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="10dip"
+                    android:layout_span="2"
+                    android:background="@drawable/top_gradient" />
+            </TableRow>
+            <TableRow
+                style="@style/ViewItemRow">
+                <EditText
+                    style="@style/EditItemRowData"
+                    android:layout_span="2"
+                    android:id="@+id/item_edit_notes"
+                    android:text="Notes" />
+            </TableRow>
+        </TableLayout>
+    </LinearLayout>
+</ScrollView>

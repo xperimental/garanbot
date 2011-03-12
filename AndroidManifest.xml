@@ -24,7 +24,8 @@
         <activity
             android:name=".ViewItemActivity" />
         <activity
-            android:name=".EditItemActivity" />
+            android:name=".EditItemActivity"
+            android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".SettingsActivity" />
         <service

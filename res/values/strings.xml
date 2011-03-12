@@ -48,4 +48,5 @@
     <string name="list_empty">No items on device! Please synchronize with server or create an item...</string>
     <string name="list_warnsync">Sync is disabled! Please enable it...</string>
     <string name="view_edit">Edit item</string>
+    <string name="edit_save">Save</string>
 </resources>
