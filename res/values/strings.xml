@@ -32,6 +32,12 @@
     <string name="item_view_purchase">Purchase date:</string>
     <string name="item_view_endwarranty">End of warranty:</string>
     <string name="item_view_notes">Notes</string>
+    <string name="item_edit_name_hint">Name</string>
+    <string name="item_edit_manufacturer_hint">Manufacturer</string>
+    <string name="item_edit_model_hint">Model</string>
+    <string name="item_edit_vendor_hint">Vendor</string>
+    <string name="item_edit_location_hint">Location</string>
+    <string name="item_edit_notes_hint">Notes</string>
     <string name="toast_list_deleteerror">Error deleting item!</string>
     <string name="list_empty">No items on device! Please synchronize with server or create an item...</string>
     <string name="list_warnsync">Sync is disabled! Please enable it...</string>

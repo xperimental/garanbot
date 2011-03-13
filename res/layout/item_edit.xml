@@ -21,6 +21,7 @@
                 android:src="@drawable/item_nopicture" />
             <EditText
                 android:text="Name"
+                android:hint="@string/item_edit_name_hint"
                 android:id="@+id/item_edit_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -63,7 +64,8 @@
                     style="@style/EditItemRowData"
                     android:id="@+id/item_edit_manufacturer"
                     android:inputType="textMultiLine"
-                    android:text="Manufacturer" />
+                    android:text="Manufacturer"
+                    android:hint="@string/item_edit_manufacturer_hint" />
             </TableRow>
             <TableRow
                 style="@style/ViewItemRow">
@@ -73,7 +75,8 @@
                 <EditText
                     style="@style/EditItemRowData"
                     android:text="Model"
-                    android:id="@+id/item_edit_model" />
+                    android:id="@+id/item_edit_model"
+                    android:hint="@string/item_edit_model_hint" />
             </TableRow>
             <TableRow
                 style="@style/ViewItemRow">
@@ -83,7 +86,8 @@
                 <EditText
                     style="@style/EditItemRowData"
                     android:text="Location"
-                    android:id="@+id/item_edit_location" />
+                    android:id="@+id/item_edit_location"
+                    android:hint="@string/item_edit_location_hint" />
             </TableRow>
             <TableRow
                 android:layout_width="match_parent"
@@ -117,7 +121,8 @@
                 <EditText
                     style="@style/EditItemRowData"
                     android:text="Vendor"
-                    android:id="@+id/item_edit_vendor" />
+                    android:id="@+id/item_edit_vendor"
+                    android:hint="@string/item_edit_vendor_hint" />
             </TableRow>
             <TableRow
                 style="@style/ViewItemRow">
@@ -170,6 +175,7 @@
                     android:layout_height="wrap_content"
                     android:layout_span="2"
                     android:id="@+id/item_edit_notes"
+                    android:hint="@string/item_edit_notes_hint"
                     android:text="Notes" />
             </TableRow>
         </TableLayout>
