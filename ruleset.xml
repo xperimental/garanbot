@@ -29,7 +29,6 @@
     <rule ref="rulesets/codesize.xml" />
     <rule ref="rulesets/finalizers.xml" />
     <rule ref="rulesets/logging-jakarta-commons.xml" />
-    <rule ref="rulesets/javabeans.xml" />
     <rule ref="rulesets/clone.xml" />
     <rule ref="rulesets/android.xml">
         <exclude name="ProtectLogD" />
