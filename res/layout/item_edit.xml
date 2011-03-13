@@ -166,7 +166,8 @@
             <TableRow
                 style="@style/ViewItemRow">
                 <EditText
-                    style="@style/EditItemRowData"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:layout_span="2"
                     android:id="@+id/item_edit_notes"
                     android:text="Notes" />
