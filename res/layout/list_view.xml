@@ -3,20 +3,6 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:id="@+id/list_warnsync"
-        android:text="@string/list_warnsync"
-        android:textColor="#F00"
-        android:textSize="6pt"
-        android:gravity="center_horizontal"
-        android:background="@android:color/darker_gray"
-        android:padding="5dip"
-        android:visibility="gone" />
     <ListView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -37,4 +23,31 @@
         android:text="@string/list_empty"
         android:textSize="10pt"
         android:typeface="serif" />
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/list_warnsync_box"
+        android:gravity="center_horizontal"
+        android:background="@android:color/darker_gray"
+        android:padding="5dip">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/list_warnsync_icon"
+            android:src="@drawable/ic_warning" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/list_warnsync_icon"
+            android:layout_alignTop="@id/list_warnsync_icon"
+            android:layout_alignBottom="@id/list_warnsync_icon"
+            android:id="@+id/list_warnsync"
+            android:text="@string/list_warnsync"
+            android:textColor="#F00"
+            android:textSize="6pt"
+            android:gravity="center_vertical" />
+    </RelativeLayout>
 </RelativeLayout>

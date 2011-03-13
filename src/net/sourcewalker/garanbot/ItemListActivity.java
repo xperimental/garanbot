@@ -24,9 +24,11 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -41,14 +43,15 @@ import android.widget.Toast;
  * 
  * @author Xperimental
  */
-public class ItemListActivity extends ListActivity {
+public class ItemListActivity extends ListActivity implements OnClickListener {
 
     private static final String TAG = "ItemListActivity";
 
     private String accountType;
     private AccountManager accountManager;
     private SyncStatusReceiver syncReceiver;
-    private TextView syncWarning;
+    private TextView syncWarningButton;
+    private RelativeLayout syncWarning;
 
     /*
      * (non-Javadoc)
@@ -66,7 +69,29 @@ public class ItemListActivity extends ListActivity {
         accountManager = AccountManager.get(this);
 
         syncReceiver = new SyncStatusReceiver();
-        syncWarning = (TextView) findViewById(R.id.list_warnsync);
+        syncWarning = (RelativeLayout) findViewById(R.id.list_warnsync_box);
+        syncWarningButton = (TextView) findViewById(R.id.list_warnsync);
+        syncWarningButton.setOnClickListener(this);
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see android.view.View.OnClickListener#onClick(android.view.View)
+     */
+    @Override
+    public void onClick(final View v) {
+        switch (v.getId()) {
+        case R.id.list_warnsync:
+            final Account account = getAccount();
+            if (account != null) {
+                ContentResolver.setSyncAutomatically(account,
+                        GaranbotDBMetaData.AUTHORITY, true);
+                checkSyncEnabled(account);
+            }
+            break;
+        default:
+            throw new IllegalArgumentException("Unknown view: " + v);
+        }
     }
 
     /*
@@ -83,9 +108,7 @@ public class ItemListActivity extends ListActivity {
         if (account == null) {
             startCreateAccount();
         } else {
-            final boolean syncEnabled = ContentResolver.getSyncAutomatically(
-                    account, GaranbotDBMetaData.AUTHORITY);
-            syncWarning.setVisibility(syncEnabled ? View.GONE : View.VISIBLE);
+            checkSyncEnabled(account);
         }
 
         // query content provider to receive all garanbo items
@@ -102,6 +125,15 @@ public class ItemListActivity extends ListActivity {
                         GaranbotDBMetaData.IMAGE_URI }, new int[] {
                         R.id.firstLine, R.id.secondLine, R.id.icon });
         setListAdapter(adapter);
+    }
+
+    /**
+     * @param account
+     */
+    private void checkSyncEnabled(final Account account) {
+        final boolean syncEnabled = ContentResolver.getSyncAutomatically(
+                account, GaranbotDBMetaData.AUTHORITY);
+        syncWarning.setVisibility(syncEnabled ? View.GONE : View.VISIBLE);
     }
 
     /*
