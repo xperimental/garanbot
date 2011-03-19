@@ -6,6 +6,10 @@
         android:title="@string/edit_save"
         android:icon="@drawable/ic_menu_save" />
     <item
+        android:id="@+id/edit_scan"
+        android:title="@string/edit_scan"
+        android:icon="@drawable/ic_menu_barcode" />
+    <item
         android:id="@+id/edit_cancel"
         android:title="@android:string/cancel"
         android:icon="@drawable/ic_menu_cancel" />

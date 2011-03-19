@@ -43,4 +43,12 @@
     <string name="list_warnsync">Sync is disabled! Click here to enable...</string>
     <string name="view_edit">Edit item</string>
     <string name="edit_save">Save</string>
+    <string name="edit_scan">Scan barcode</string>
+    <string name="edit_barcode_dialog_title">Barcode search...</string>
+    <string name="edit_barcode_dialog_confirm">Scanned code: %s\n\nIs this correct?</string>
+    <string name="edit_barcode_dialog_progress">Searching for products with code %s...</string>
+    <string name="edit_barcode_dialog_result">Product found:\n%s\n\nApply to item?</string>
+    <string name="scan_install_title">Additional software needed</string>
+    <string name="scan_install_message">To scan a barcode you will have to install additional software from the Android Market. Do you want to do that?</string>
+    <string name="scan_cancelled">Barcode recognition was cancelled.</string>
 </resources>
