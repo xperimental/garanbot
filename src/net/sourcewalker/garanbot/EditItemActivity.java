@@ -500,9 +500,16 @@ public class EditItemActivity extends Activity {
         @Override
         protected void onPostExecute(BarcodeResult result) {
             dismissDialog(DIALOG_PROGRESS_BARCODE);
-            Bundle extras = new Bundle();
-            extras.putParcelable(EXTRA_RESULT, result);
-            showDialog(DIALOG_RESULT_BARCODE, extras);
+
+            if (result == null) {
+                Toast.makeText(EditItemActivity.this,
+                        R.string.toast_scan_not_found, Toast.LENGTH_LONG)
+                        .show();
+            } else {
+                Bundle extras = new Bundle();
+                extras.putParcelable(EXTRA_RESULT, result);
+                showDialog(DIALOG_RESULT_BARCODE, extras);
+            }
         }
 
         /*

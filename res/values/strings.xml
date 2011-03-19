@@ -51,4 +51,5 @@
     <string name="scan_install_title">Additional software needed</string>
     <string name="scan_install_message">To scan a barcode you will have to install additional software from the Android Market. Do you want to do that?</string>
     <string name="scan_cancelled">Barcode recognition was cancelled.</string>
+    <string name="toast_scan_not_found">We are sorry, the product was not found!</string>
 </resources>
