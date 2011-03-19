@@ -13,6 +13,8 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EncodingUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import android.util.Base64;
 import android.util.Log;
@@ -167,6 +169,42 @@ public class GaranboClient {
         request.setEntity(new StringEntity(jsonData));
         prepareRequest(request);
         return client.execute(request);
+    }
+
+    /**
+     * Search for product information using an EAN code.
+     * 
+     * @param eanCode
+     *            EAN Code as String
+     */
+    public BarcodeResult searchEan(final String eanCode) throws ClientException {
+        BarcodeResult result = null;
+        try {
+            HttpResponse response = get("/ean/" + eanCode);
+            final int statusCode = response.getStatusLine().getStatusCode();
+            switch (statusCode) {
+            case HttpStatus.SC_OK:
+                String content = readEntity(response);
+                JSONObject resultJson = new JSONObject(content)
+                        .optJSONObject("eanResultList");
+                if (resultJson != null) {
+                    result = new BarcodeResult(resultJson);
+                }
+                break;
+            case HttpStatus.SC_NOT_FOUND:
+                break;
+            default:
+                throw new ClientException("Got HTTP status: "
+                        + response.getStatusLine());
+            }
+        } catch (IOException e) {
+            throw new ClientException("Error during communication: "
+                    + e.getMessage(), e);
+        } catch (JSONException e) {
+            throw new ClientException(
+                    "Error parsing result: " + e.getMessage(), e);
+        }
+        return result;
     }
 
 }
