@@ -184,7 +184,7 @@ public class GaranboItemsProvider extends ContentProvider {
         case MATCH_IMAGE:
             long itemId = ContentUris.parseId(uri);
             File imageFile;
-            if (itemId == Item.UNKNOWN_ID) {
+            if (itemId == Item.UNKNOWN_ID || !checkItemHasPicture(itemId)) {
                 imageFile = ImageCache.getDefaultImageFile(getContext());
             } else {
                 imageFile = ImageCache.getFile(getContext(), itemId);
@@ -198,5 +198,33 @@ public class GaranboItemsProvider extends ContentProvider {
         default:
             throw new IllegalArgumentException("Unknown URI: " + uri);
         }
+    }
+
+    /**
+     * Returns true, if the item has a picture.
+     * 
+     * @param itemId
+     *            ID of item to query for.
+     * @return True, if picture is available.
+     */
+    private boolean checkItemHasPicture(long itemId) {
+        boolean result = false;
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = null;
+        try {
+            cursor = db.query(GaranbotDBMetaData.TABLE_NAME,
+                    new String[] { GaranbotDBMetaData.HASPICTURE },
+                    GaranbotDBMetaData._ID + " == ?",
+                    new String[] { Long.toString(itemId) }, null, null, null);
+            if (cursor.moveToFirst()) {
+                result = cursor.getInt(0) > 0;
+            }
+        } finally {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+        }
+        return result;
     }
 }
