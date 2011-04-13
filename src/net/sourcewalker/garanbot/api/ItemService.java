@@ -193,7 +193,7 @@ public class ItemService {
             }
             String jsonData = itemData.json().toString();
             HttpResponse response = client.put("/item", jsonData);
-            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_CREATED) {
                 throw new ClientException("Got HTTP error: "
                         + response.getStatusLine().toString());
             }

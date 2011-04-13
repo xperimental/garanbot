@@ -348,7 +348,7 @@ public class EditItemActivity extends Activity {
         item.setLocation(locationField.getText().toString());
         item.setNotes(notesField.getText().toString());
         item.setVendor(vendorField.getText().toString());
-        item.setLastModified(new Date());
+        item.getLocalState().setDetailsChanged();
 
         if (editItem) {
             getContentResolver().update(

@@ -25,7 +25,7 @@ public final class ItemUtilities {
         try {
             if (cursor.moveToFirst()) {
                 final Item item = Item.fromCursor(cursor);
-                item.setDeleted(true);
+                item.getLocalState().setDeleted();
                 final int count = activity.getContentResolver().update(itemUri,
                         item.toContentValues(), null, null);
                 if (count != 1) {

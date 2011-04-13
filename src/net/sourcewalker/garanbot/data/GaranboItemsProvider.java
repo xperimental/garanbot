@@ -138,7 +138,8 @@ public class GaranboItemsProvider extends ContentProvider {
         case MATCH_LIST_ALL:
             break;
         case MATCH_LIST:
-            query.appendWhere(GaranbotDBMetaData.DELETED + " == 0");
+            query.appendWhere("(" + GaranbotDBMetaData.LOCAL_STATE + " & "
+                    + LocalState.DELETED + ") == 0");
             break;
         case MATCH_ITEM:
             query.appendWhere(GaranbotDBMetaData._ID + " == "

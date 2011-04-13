@@ -1,7 +1,6 @@
 package net.sourcewalker.garanbot.data.sync;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +12,7 @@ import net.sourcewalker.garanbot.api.Item;
 import net.sourcewalker.garanbot.data.GaranboItemsProvider;
 import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
 import net.sourcewalker.garanbot.data.ImageCache;
+import net.sourcewalker.garanbot.data.LocalState;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.content.AbstractThreadedSyncAdapter;
@@ -147,6 +147,7 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
                 Item localItem = getLocalItem(provider, id);
                 int serverId = client.item().create(localItem);
                 localItem.setServerId(serverId);
+                localItem.setLocalState(new LocalState());
                 provider.update(ContentUris.withAppendedId(
                         GaranboItemsProvider.CONTENT_URI_ITEMS, id), localItem
                         .toContentValues(), null, null);
@@ -167,7 +168,7 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
                 }
                 int localId = localIdList.get(0);
                 Item localItem = getLocalItem(provider, localId);
-                if (localItem.isDeleted()) {
+                if (localItem.getLocalState().isDeleted()) {
                     Log.d(TAG, "  Deleted locally.");
                     client.item().delete(serverId);
                     provider.delete(ContentUris.withAppendedId(
@@ -177,29 +178,38 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
                     Item serverItem = client.item().getIfNewer(serverId,
                             localItem.getLastModified());
                     if (serverItem == null) {
+                        // Server copy not modified
                         Log.d(TAG, "  Server item not modified.");
-                    } else {
-                        int compare = compareDates(localItem, serverItem);
-                        if (compare == 0) {
-                            // Same modified date (treat as equal)
-                            Log.d(TAG, "  Same date -> equal.");
-                        } else {
-                            if (compare < 0) {
-                                Log.d(TAG, "  Server newer.");
-                                provider.update(ContentUris.withAppendedId(
-                                        GaranboItemsProvider.CONTENT_URI_ITEMS,
-                                        localId), serverItem.toContentValues(),
-                                        null, null);
-                                ImageCache.deleteImage(getContext(), localId);
-                            } else {
-                                Log.d(TAG, "  Local newer.");
-                                client.item().update(localItem);
-                                serverItem = client.item().get(serverId);
-                                provider.update(ContentUris.withAppendedId(
-                                        GaranboItemsProvider.CONTENT_URI_ITEMS,
-                                        localId), serverItem.toContentValues(),
-                                        null, null);
+                        if (localItem.getLocalState().changed()) {
+                            // Local copy modified -> upload
+                            Log.d(TAG, "  Client item modified -> upload.");
+                            if (localItem.getLocalState().pictureChanged()) {
+                                uploadItemPicture(localItem);
                             }
+                            client.item().update(localItem);
+                            serverItem = client.item().get(serverId);
+                            provider.update(ContentUris.withAppendedId(
+                                    GaranboItemsProvider.CONTENT_URI_ITEMS,
+                                    localId), serverItem.toContentValues(),
+                                    null, null);
+                            syncResult.stats.numUpdates++;
+                        } else {
+                            Log.d(TAG, "  Both versions not modified.");
+                        }
+                    } else {
+                        // Server copy modified
+                        Log.d(TAG, "  Server item modified.");
+                        if (localItem.getLocalState().changed()) {
+                            // Both modified -> conflict (see GBOT-22)
+                            Log.w(TAG, "  CONFLICT: Both modified.");
+                        } else {
+                            // Local not modified -> download
+                            Log.d(TAG, "  Server item modified -> download.");
+                            provider.update(ContentUris.withAppendedId(
+                                    GaranboItemsProvider.CONTENT_URI_ITEMS,
+                                    localId), serverItem.toContentValues(),
+                                    null, null);
+                            ImageCache.deleteImage(getContext(), localId);
                             syncResult.stats.numUpdates++;
                         }
                     }
@@ -231,20 +241,14 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     /**
-     * Compare the modified dates of two items.
+     * Upload a locally saved picture to the server. The picture is read from
+     * the local {@link ImageCache}.
      * 
-     * @param itemA
-     *            First item to compare.
-     * @param itemB
-     *            Second item to compare.
-     * @return <code>0</code> if items have equals dates. Positive if
-     *         <code>itemA</code> is newer, negative if <code>itemB</code> is
-     *         newer.
+     * @param localItem
+     *            Item to upload picture for.
      */
-    private int compareDates(Item itemA, Item itemB) {
-        Date modifiedA = itemA.getLastModified();
-        Date modifiedB = itemB.getLastModified();
-        return modifiedA.compareTo(modifiedB);
+    private void uploadItemPicture(final Item localItem) {
+        // TODO Upload picture to server
     }
 
     /**

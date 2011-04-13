@@ -5,6 +5,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
+import net.sourcewalker.garanbot.data.LocalState;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -95,7 +96,10 @@ public class Item {
      */
     private Date lastModified = new Date();
 
-    private boolean deleted = false;
+    /**
+     * Local state of item.
+     */
+    private LocalState localState = new LocalState();
 
     public int getLocalId() {
         return localId;
@@ -197,17 +201,17 @@ public class Item {
         this.lastModified = lastModified;
     }
 
+    public LocalState getLocalState() {
+        return localState;
+    }
+
+    public void setLocalState(LocalState localState) {
+        this.localState = localState;
+    }
+
     public Item(int id) {
         this.localId = id;
         this.serverId = UNKNOWN_ID;
-    }
-
-    public boolean isDeleted() {
-        return deleted;
-    }
-
-    public void setDeleted(boolean deleted) {
-        this.deleted = deleted;
     }
 
     public JSONObject json() throws ClientException {
@@ -335,8 +339,8 @@ public class Item {
                     .getColumnIndexOrThrow(GaranbotDBMetaData.LAST_MODIFIED))));
             result.setServerId(cursor.getInt(cursor
                     .getColumnIndexOrThrow(GaranbotDBMetaData.SERVER_ID)));
-            result.setDeleted(cursor.getInt(cursor
-                    .getColumnIndexOrThrow(GaranbotDBMetaData.DELETED)) == 1);
+            result.setLocalState(new LocalState(cursor.getInt(cursor
+                    .getColumnIndexOrThrow(GaranbotDBMetaData.LOCAL_STATE))));
         } catch (IllegalArgumentException e) {
             throw new ClientException("Cursor data invalid: " + e.getMessage(),
                     e);
@@ -368,7 +372,7 @@ public class Item {
         result.put(GaranbotDBMetaData.LAST_MODIFIED,
                 dateString(getLastModified()));
         result.put(GaranbotDBMetaData.SERVER_ID, getServerId());
-        result.put(GaranbotDBMetaData.DELETED, isDeleted() ? 1 : 0);
+        result.put(GaranbotDBMetaData.LOCAL_STATE, getLocalState().getValue());
         return result;
     }
 

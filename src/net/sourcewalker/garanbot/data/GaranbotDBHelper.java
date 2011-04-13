@@ -9,7 +9,7 @@ public class GaranbotDBHelper extends SQLiteOpenHelper {
 
     private static final String TAG = "GaranbotDBHelper";
     private static final String DATABASE_NAME = "garanbot.db";
-    private static final int DATABASE_VERSION = 8;
+    private static final int DATABASE_VERSION = 9;
 
     private Context context;
 
