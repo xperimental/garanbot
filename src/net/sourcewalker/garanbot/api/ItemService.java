@@ -1,5 +1,7 @@
 package net.sourcewalker.garanbot.api;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -142,6 +144,22 @@ public class ItemService {
             case HttpStatus.SC_NOT_FOUND:
                 return null;
             default:
+                throw new ClientException("Got HTTP error: "
+                        + response.getStatusLine().toString());
+            }
+        } catch (IOException e) {
+            throw new ClientException("IO error: " + e.getMessage(), e);
+        }
+    }
+
+    public void uploadPicture(final int id, final File picture)
+            throws ClientException {
+        try {
+            final FileInputStream stream = new FileInputStream(picture);
+            final HttpResponse response = client.put(
+                    "/item/" + id + "/picture", "image/jpeg", stream,
+                    picture.length());
+            if (response.getStatusLine().getStatusCode() != HttpStatus.SC_OK) {
                 throw new ClientException("Got HTTP error: "
                         + response.getStatusLine().toString());
             }

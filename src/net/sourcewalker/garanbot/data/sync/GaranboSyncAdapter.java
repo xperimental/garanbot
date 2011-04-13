@@ -1,5 +1,6 @@
 package net.sourcewalker.garanbot.data.sync;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -184,7 +185,7 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
                             // Local copy modified -> upload
                             Log.d(TAG, "  Client item modified -> upload.");
                             if (localItem.getLocalState().pictureChanged()) {
-                                uploadItemPicture(localItem);
+                                uploadItemPicture(client, localItem);
                             }
                             client.item().update(localItem);
                             serverItem = client.item().get(serverId);
@@ -244,11 +245,18 @@ public class GaranboSyncAdapter extends AbstractThreadedSyncAdapter {
      * Upload a locally saved picture to the server. The picture is read from
      * the local {@link ImageCache}.
      * 
+     * @param client
+     *            Client object to use for server communication.
      * @param localItem
      *            Item to upload picture for.
+     * @throws ClientException
+     *             If the upload failed.
      */
-    private void uploadItemPicture(final Item localItem) {
-        // TODO Upload picture to server
+    private void uploadItemPicture(GaranboClient client, final Item localItem)
+            throws ClientException {
+        final int id = localItem.getLocalId();
+        File pictureFile = ImageCache.getFile(getContext(), id);
+        client.item().uploadPicture(id, pictureFile);
     }
 
     /**

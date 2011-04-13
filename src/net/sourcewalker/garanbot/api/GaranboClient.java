@@ -10,6 +10,7 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EncodingUtils;
@@ -100,9 +101,18 @@ public class GaranboClient {
         prepareRequest(request, new Header[0]);
     }
 
+    private void prepareRequest(String contentType, HttpRequestBase request) {
+        prepareRequest(contentType, request, new Header[0]);
+    }
+
     private void prepareRequest(HttpRequestBase request,
             Header[] additionalHeaders) {
-        request.addHeader("Content-type", "application/json");
+        prepareRequest("application/json", request, additionalHeaders);
+    }
+
+    private void prepareRequest(String contentType, HttpRequestBase request,
+            Header[] additionalHeaders) {
+        request.addHeader("Content-type", contentType);
         request.addHeader("open-api", ApiConstants.KEY);
         request.addHeader("Authorization", getAuthHeader());
         for (Header h : additionalHeaders) {
@@ -168,6 +178,29 @@ public class GaranboClient {
         HttpPut request = new HttpPut(ApiConstants.BASE + path);
         request.setEntity(new StringEntity(jsonData));
         prepareRequest(request);
+        return client.execute(request);
+    }
+
+    /**
+     * Execute HTTP PUT with URL and provided content.
+     * 
+     * @param path
+     *            Path to PUT to.
+     * @param contentType
+     *            MIMEtype of content.
+     * @param stream
+     *            Stream with data to send to server.
+     * @param streamSize
+     *            Length of data.
+     * @return HTTP Response return by server.
+     * @throws IOException
+     *             When there was an error communicating with the server.
+     */
+    public HttpResponse put(final String path, final String contentType,
+            final InputStream stream, final long streamSize) throws IOException {
+        HttpPut request = new HttpPut(ApiConstants.BASE + path);
+        request.setEntity(new InputStreamEntity(stream, streamSize));
+        prepareRequest(contentType, request);
         return client.execute(request);
     }
 
