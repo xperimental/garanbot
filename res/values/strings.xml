@@ -54,5 +54,10 @@
     <string name="scan_cancelled">Barcode recognition was cancelled.</string>
     <string name="toast_scan_not_found">We are sorry, the product was not found!</string>
     <string name="register_title">Register new account</string>
-    <string name="register_button_create">Register</string>
+    <string name="register_ok">Register</string>
+    <string name="register_user">Desired username:</string>
+    <string name="register_password">Password:</string>
+    <string name="register_password_check">Password (repeat):</string>
+    <string name="register_name">Your full name:</string>
+    <string name="register_email">Your email address:</string>
 </resources>
