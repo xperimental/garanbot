@@ -9,15 +9,15 @@ public class UserService {
 
     private final GaranboClient client;
 
-    UserService(GaranboClient client) {
+    UserService(final GaranboClient client) {
         this.client = client;
     }
 
     public User get() throws ClientException {
         try {
-            HttpResponse response = client.get("/user");
+            final HttpResponse response = client.get("/user");
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                String content = client.readEntity(response);
+                final String content = client.readEntity(response);
                 return User.fromJSON(content);
             } else {
                 throw new ClientException("Got HTTP error: "
@@ -28,4 +28,19 @@ public class UserService {
         }
     }
 
+    public boolean create(final User user, final String password)
+            throws ClientException {
+        try {
+            final String jsonData = user.json(password);
+            final HttpResponse response = client.put("/user", jsonData);
+            if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
+                return true;
+            } else {
+                throw new ClientException("Got HTTP status: "
+                        + response.getStatusLine());
+            }
+        } catch (IOException e) {
+            throw new ClientException("IO error: " + e.getMessage(), e);
+        }
+    }
 }

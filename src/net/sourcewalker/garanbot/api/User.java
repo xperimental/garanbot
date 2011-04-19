@@ -69,4 +69,30 @@ public class User {
         }
     }
 
+    /**
+     * Create JSON representation of User object.
+     * 
+     * @param password
+     *            Password to use for serialized object. <code>null</code> if no
+     *            password should be set.
+     * @return User object serialized as JSON String.
+     * @throws ClientException
+     *             When serialization fails.
+     */
+    public String json(final String password) throws ClientException {
+        final JSONObject result = new JSONObject();
+        try {
+            result.put("username", getUsername());
+            result.put("name", getName());
+            result.put("email", getEmail());
+            if (password != null) {
+                result.put("password", password);
+            }
+        } catch (final JSONException e) {
+            throw new ClientException("Error generating JSON for User: "
+                    + e.getMessage(), e);
+        }
+        return result.toString();
+    }
+
 }
