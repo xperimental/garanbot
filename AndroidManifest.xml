@@ -11,7 +11,7 @@
             android:name=".account.LoginActivity"
             android:label="@string/account_activity_label"
             android:noHistory="true"
-            android:windowSoftInputMode="stateVisible|adjustResize" />
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <activity
             android:name=".ItemListActivity">
             <intent-filter>
