@@ -60,4 +60,9 @@
     <string name="register_password_check">Password (repeat):</string>
     <string name="register_name">Your full name:</string>
     <string name="register_email">Your email address:</string>
+    <string name="register_username_error">Please enter a username!</string>
+    <string name="register_password_error">Please use at least eight characters!</string>
+    <string name="register_passwordcheck_error">Passwords do not match!</string>
+    <string name="register_name_error">Please enter your name!</string>
+    <string name="register_email_error">Please enter a valid email address!</string>
 </resources>
