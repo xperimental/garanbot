@@ -28,6 +28,10 @@
             android:windowSoftInputMode="stateVisible|adjustResize" />
         <activity
             android:name=".SettingsActivity" />
+        <activity
+            android:name=".account.RegisterActivity"
+            android:label="@string/register_title"
+            android:windowSoftInputMode="stateHidden|adjustResize" />
         <service
             android:exported="true"
             android:name=".account.AuthenticatorService">
