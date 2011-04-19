@@ -1,6 +1,7 @@
 package net.sourcewalker.garanbot.account;
 
 import net.sourcewalker.garanbot.R;
+import net.sourcewalker.garanbot.api.AuthenticationException;
 import net.sourcewalker.garanbot.api.ClientException;
 import net.sourcewalker.garanbot.api.GaranboClient;
 import net.sourcewalker.garanbot.api.User;
@@ -11,6 +12,7 @@ import android.accounts.AccountManager;
 import android.content.ContentResolver;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
@@ -33,6 +35,8 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
     public static final String ACTION_ERROR = LoginActivity.class.getName()
             + ".ERROR";
 
+    public static final String TAG = "LoginActivity";
+
     private String accountType;
     private AccountManager accountManager;
     private Button loginButton;
@@ -45,7 +49,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
      * @see android.app.Activity#onCreate(android.os.Bundle)
      */
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
         setContentView(R.layout.activity_login);
@@ -61,9 +65,9 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
         passwordField = (EditText) findViewById(R.id.login_password);
 
         if (ACTION_ERROR.equals(getIntent().getAction())) {
-            Bundle extras = getIntent().getExtras();
+            final Bundle extras = getIntent().getExtras();
             if (extras != null) {
-                String message = extras
+                final String message = extras
                         .getString(AccountManager.KEY_ERROR_MESSAGE);
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             }
@@ -77,7 +81,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
      * @param enabled
      *            If true, elements will be enabled.
      */
-    protected void enableGui(boolean enabled) {
+    protected void enableGui(final boolean enabled) {
         loginButton.setEnabled(enabled);
         cancelButton.setEnabled(enabled);
         usernameField.setEnabled(enabled);
@@ -92,12 +96,12 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
      * @param password
      *            Password of new account.
      */
-    public void createAccount(String username, String password) {
-        Account account = new Account(username, accountType);
-        boolean created = accountManager.addAccountExplicitly(account,
+    public void createAccount(final String username, final String password) {
+        final Account account = new Account(username, accountType);
+        final boolean created = accountManager.addAccountExplicitly(account,
                 password, null);
         if (created) {
-            Bundle result = new Bundle();
+            final Bundle result = new Bundle();
             result.putString(AccountManager.KEY_ACCOUNT_NAME, username);
             result.putString(AccountManager.KEY_ACCOUNT_TYPE, accountType);
             setAccountAuthenticatorResult(result);
@@ -115,18 +119,20 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
      * (non-Javadoc)
      * @see android.view.View.OnClickListener#onClick(android.view.View)
      */
-    public void onClick(View v) {
+    public void onClick(final View v) {
         switch (v.getId()) {
         case R.id.login_ok:
-            String username = usernameField.getText().toString();
-            String password = passwordField.getText().toString();
+            final String username = usernameField.getText().toString();
+            final String password = passwordField.getText().toString();
 
-            CredentialsTestTask task = new CredentialsTestTask();
+            final CredentialsTestTask task = new CredentialsTestTask();
             task.execute(username, password);
             break;
         case R.id.login_cancel:
             finish();
             break;
+        default:
+            throw new IllegalArgumentException("Unknown view clicked: " + v);
         }
     }
 
@@ -136,7 +142,8 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
         public String password;
         public boolean successful;
 
-        public LoginResult(String username, String password, boolean result) {
+        public LoginResult(final String username, final String password,
+                final boolean result) {
             this.username = username;
             this.password = password;
             this.successful = result;
@@ -161,16 +168,21 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
          * @see android.os.AsyncTask#doInBackground(Params[])
          */
         @Override
-        protected LoginResult doInBackground(String... params) {
-            String username = params[0];
-            String password = params[1];
-            GaranboClient client = new GaranboClient(username, password);
-            Boolean result = false;
+        protected LoginResult doInBackground(final String... params) {
+            final String username = params[0];
+            final String password = params[1];
+            final GaranboClient client = new GaranboClient(username, password);
+            Boolean result;
             try {
-                User serverUser = client.user().get();
+                final User serverUser = client.user().get();
                 result = username.equalsIgnoreCase(serverUser.getUsername());
-            } catch (ClientException e) {
-                // Any exception causes login to fail.
+            } catch (final AuthenticationException e) {
+                // Wrong password etc.
+                result = false;
+            } catch (final ClientException e) {
+                // Other reason for failing (e.g. network).
+                Log.e(TAG, "Error while logging in: " + e.getMessage());
+                result = false;
             }
             return new LoginResult(username, password, result);
         }
@@ -180,7 +192,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
          * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
          */
         @Override
-        protected void onPostExecute(LoginResult result) {
+        protected void onPostExecute(final LoginResult result) {
             setProgressBarIndeterminateVisibility(false);
             enableGui(true);
 
