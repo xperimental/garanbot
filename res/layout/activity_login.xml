@@ -23,32 +23,36 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true" />
     </RelativeLayout>
-    <LinearLayout
+    <ScrollView
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_alignBottom="@id/login_buttongroup"
-        android:orientation="vertical"
+        android:layout_above="@id/login_buttongroup"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-        <TextView
-            android:text="@string/input_user"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/login_username"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:imeOptions="actionNext" />
-        <TextView
-            android:text="@string/input_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <EditText
-            android:id="@+id/login_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionDone"
-            android:inputType="textPassword" />
-    </LinearLayout>
+            android:orientation="vertical">
+            <TextView
+                android:text="@string/input_user"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <EditText
+                android:id="@+id/login_username"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionNext" />
+            <TextView
+                android:text="@string/input_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+            <EditText
+                android:id="@+id/login_password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="textPassword" />
+        </LinearLayout>
+    </ScrollView>
 </RelativeLayout>
