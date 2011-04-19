@@ -7,6 +7,7 @@
     <string name="input_user">Username:</string>
     <string name="input_password">Password:</string>
     <string name="input_login">Login</string>
+    <string name="login_register">Register new account</string>
     <string name="menu_add">Add item</string>
     <string name="menu_load">Start Sync...</string>
     <string name="menu_settings">Settings</string>

@@ -10,6 +10,7 @@ import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.content.ContentResolver;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,6 +42,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
     private AccountManager accountManager;
     private Button loginButton;
     private Button cancelButton;
+    private Button registerButton;
     private EditText usernameField;
     private EditText passwordField;
 
@@ -61,6 +63,8 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
         loginButton.setOnClickListener(this);
         cancelButton = (Button) findViewById(R.id.login_cancel);
         cancelButton.setOnClickListener(this);
+        registerButton = (Button) findViewById(R.id.login_register);
+        registerButton.setOnClickListener(this);
         usernameField = (EditText) findViewById(R.id.login_username);
         passwordField = (EditText) findViewById(R.id.login_password);
 
@@ -84,6 +88,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
     protected void enableGui(final boolean enabled) {
         loginButton.setEnabled(enabled);
         cancelButton.setEnabled(enabled);
+        registerButton.setEnabled(enabled);
         usernameField.setEnabled(enabled);
         passwordField.setEnabled(enabled);
     }
@@ -130,6 +135,11 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
             break;
         case R.id.login_cancel:
             finish();
+            break;
+        case R.id.login_register:
+            final Intent registerActivity = new Intent(this,
+                    RegisterActivity.class);
+            startActivity(registerActivity);
             break;
         default:
             throw new IllegalArgumentException("Unknown view clicked: " + v);
