@@ -28,10 +28,9 @@ public class UserService {
         }
     }
 
-    public boolean create(final User user, final String password)
-            throws ClientException {
+    public boolean create(final RegisterUser user) throws ClientException {
         try {
-            final String jsonData = user.json(password);
+            final String jsonData = user.json();
             final HttpResponse response = client.put("/user", jsonData);
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_CREATED) {
                 return true;

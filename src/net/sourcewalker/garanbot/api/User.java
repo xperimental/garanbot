@@ -11,9 +11,9 @@ import org.json.JSONTokener;
  */
 public class User {
 
-    private String username;
-    private String name;
-    private String email;
+    protected String username;
+    protected String name;
+    protected String email;
 
     public String getUsername() {
         return username;
@@ -27,22 +27,10 @@ public class User {
         return email;
     }
 
-    private void setUsername(String username) {
-        this.username = username;
-    }
-
-    private void setName(String name) {
-        this.name = name;
-    }
-
-    private void setEmail(String email) {
-        this.email = email;
-    }
-
     /**
      * User objects can only be created from a JSON source.
      */
-    private User() {
+    protected User() {
     }
 
     /**
@@ -54,14 +42,14 @@ public class User {
      * @throws ClientException
      *             If there are parsing errors.
      */
-    public static User fromJSON(String content) throws ClientException {
+    public static User fromJSON(final String content) throws ClientException {
         try {
-            JSONObject object = (JSONObject) new JSONTokener(content)
+            final JSONObject object = (JSONObject) new JSONTokener(content)
                     .nextValue();
-            User result = new User();
-            result.setUsername(object.getString("username"));
-            result.setName(object.getString("name"));
-            result.setEmail(object.getString("email"));
+            final User result = new User();
+            result.username = object.getString("username");
+            result.name = object.getString("name");
+            result.email = object.getString("email");
             return result;
         } catch (JSONException e) {
             throw new ClientException("Error parsing User: " + e.getMessage(),
@@ -72,22 +60,16 @@ public class User {
     /**
      * Create JSON representation of User object.
      * 
-     * @param password
-     *            Password to use for serialized object. <code>null</code> if no
-     *            password should be set.
      * @return User object serialized as JSON String.
      * @throws ClientException
      *             When serialization fails.
      */
-    public String json(final String password) throws ClientException {
+    public String json() throws ClientException {
         final JSONObject result = new JSONObject();
         try {
             result.put("username", getUsername());
             result.put("name", getName());
             result.put("email", getEmail());
-            if (password != null) {
-                result.put("password", password);
-            }
         } catch (final JSONException e) {
             throw new ClientException("Error generating JSON for User: "
                     + e.getMessage(), e);
