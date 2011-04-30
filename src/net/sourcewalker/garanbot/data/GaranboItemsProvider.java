@@ -223,7 +223,6 @@ public class GaranboItemsProvider extends ContentProvider {
             if (cursor != null) {
                 cursor.close();
             }
-            db.close();
         }
         return result;
     }
