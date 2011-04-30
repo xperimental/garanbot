@@ -146,22 +146,8 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
         }
     }
 
-    private class LoginResult {
-
-        public String username;
-        public String password;
-        public boolean successful;
-
-        public LoginResult(final String username, final String password,
-                final boolean result) {
-            this.username = username;
-            this.password = password;
-            this.successful = result;
-        }
-    }
-
     private class CredentialsTestTask extends
-            AsyncTask<String, Void, LoginResult> {
+            AsyncTask<String, Void, LoginParcel> {
 
         /*
          * (non-Javadoc)
@@ -178,7 +164,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
          * @see android.os.AsyncTask#doInBackground(Params[])
          */
         @Override
-        protected LoginResult doInBackground(final String... params) {
+        protected LoginParcel doInBackground(final String... params) {
             final String username = params[0];
             final String password = params[1];
             final GaranboClient client = new GaranboClient(username, password);
@@ -194,7 +180,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
                 Log.e(TAG, "Error while logging in: " + e.getMessage());
                 result = false;
             }
-            return new LoginResult(username, password, result);
+            return new LoginParcel(username, password, result);
         }
 
         /*
@@ -202,7 +188,7 @@ public class LoginActivity extends AccountAuthenticatorActivity implements
          * @see android.os.AsyncTask#onPostExecute(java.lang.Object)
          */
         @Override
-        protected void onPostExecute(final LoginResult result) {
+        protected void onPostExecute(final LoginParcel result) {
             setProgressBarIndeterminateVisibility(false);
             enableGui(true);
 
