@@ -412,12 +412,9 @@ public class EditItemActivity extends Activity {
         try {
             // save bitmap to ImageCache
             ImageCache.saveImage(this, item.getLocalId(), bMap);
-            getContentResolver().notifyChange(
-                    ContentUris.withAppendedId(
-                            GaranboItemsProvider.CONTENT_URI_ITEMS, item
-                                    .getLocalId()), null);
-            // set haspicture in the database
-            // TODO: save has picture in the database.
+            if (!item.hasPicture()) {
+                item.setHasPicture(true);
+            }
 
         } catch (IOException e) {
             Log.e(TAG, "Error saving picture: " + e);
