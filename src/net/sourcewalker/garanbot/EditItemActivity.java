@@ -1,5 +1,6 @@
 package net.sourcewalker.garanbot;
 
+import java.io.IOException;
 import java.text.DateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -10,23 +11,27 @@ import net.sourcewalker.garanbot.api.GaranboClient;
 import net.sourcewalker.garanbot.api.Item;
 import net.sourcewalker.garanbot.data.GaranboItemsProvider;
 import net.sourcewalker.garanbot.data.GaranbotDBMetaData;
+import net.sourcewalker.garanbot.data.ImageCache;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
-import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.ContentUris;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
-import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -35,6 +40,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -60,6 +66,7 @@ public class EditItemActivity extends Activity {
             .getDateInstance(DateFormat.SHORT);
     private static final String EXTRA_BARCODE = "barcode";
     private static final String EXTRA_RESULT = "result";
+    protected static final int SELECT_PICTURE = 1;
 
     private EditText nameField;
     private EditText manufacturerField;
@@ -71,6 +78,7 @@ public class EditItemActivity extends Activity {
     private Button endWarrentyDateField;
     private Item item;
     private BarcodeSearchTask barcodeTask;
+    private ImageView image;
 
     /**
      * If true, item already exists in database and is only edited.
@@ -119,6 +127,18 @@ public class EditItemActivity extends Activity {
         }
     };
 
+    private final OnClickListener imageClickListener = new OnClickListener() {
+
+        public void onClick(View v) {
+            Intent intent = new Intent();
+            intent.setType("image/*");
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            startActivityForResult(Intent.createChooser(intent,
+                    "Select Picture"), SELECT_PICTURE);
+
+        }
+    };
+
     /**
      * 
      */
@@ -136,12 +156,14 @@ public class EditItemActivity extends Activity {
         vendorField = (EditText) findViewById(R.id.item_edit_vendor);
         purchaseDateField = (Button) findViewById(R.id.item_edit_purchase);
         endWarrentyDateField = (Button) findViewById(R.id.item_edit_endwarranty);
+        image = (ImageView) findViewById(R.id.item_edit_image);
 
         // add a click listeners
         purchaseDateField.setOnClickListener(new DateDialogButtonListener(
                 DIALOG_PURCHASE_DATE));
         endWarrentyDateField.setOnClickListener(new DateDialogButtonListener(
                 DIALOG_WARRANTY_DATE));
+        image.setOnClickListener(imageClickListener);
 
         item = new Item(Item.UNKNOWN_ID);
         final String action = getIntent().getAction();
@@ -187,6 +209,8 @@ public class EditItemActivity extends Activity {
         vendorField.setText(item.getVendor());
         purchaseDateField.setText(formatDate(item.getPurchaseDate()));
         endWarrentyDateField.setText(formatDate(item.getEndOfWarranty()));
+        image.setImageURI(ContentUris.withAppendedId(
+                GaranboItemsProvider.CONTENT_URI_IMAGES, item.getLocalId()));
     }
 
     private String formatDate(final Date date) {
@@ -215,19 +239,17 @@ public class EditItemActivity extends Activity {
             dialog = createProgressDialog();
             break;
         case DIALOG_CONFIRM_BARCODE:
-            dialog = new AlertDialog.Builder(this)
-                    .setTitle(R.string.edit_barcode_dialog_title)
-                    .setMessage(R.string.edit_barcode_dialog_confirm)
-                    .setCancelable(false)
+            dialog = new AlertDialog.Builder(this).setTitle(
+                    R.string.edit_barcode_dialog_title).setMessage(
+                    R.string.edit_barcode_dialog_confirm).setCancelable(false)
                     .setPositiveButton(android.R.string.yes,
                             new BarcodeConfirmListener(bundle))
                     .setNegativeButton(android.R.string.no, null).create();
             break;
         case DIALOG_RESULT_BARCODE:
-            dialog = new AlertDialog.Builder(this)
-                    .setTitle(R.string.edit_barcode_dialog_title)
-                    .setMessage(R.string.edit_barcode_dialog_result)
-                    .setCancelable(false)
+            dialog = new AlertDialog.Builder(this).setTitle(
+                    R.string.edit_barcode_dialog_title).setMessage(
+                    R.string.edit_barcode_dialog_result).setCancelable(false)
                     .setPositiveButton(android.R.string.yes,
                             new BarcodeApplyListener(bundle))
                     .setNegativeButton(android.R.string.no, null).create();
@@ -252,8 +274,8 @@ public class EditItemActivity extends Activity {
         final Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         final DatePickerDialog dialog = new DatePickerDialog(this, listener,
-                cal.get(Calendar.YEAR), cal.get(Calendar.MONDAY),
-                cal.get(Calendar.DAY_OF_MONTH));
+                cal.get(Calendar.YEAR), cal.get(Calendar.MONDAY), cal
+                        .get(Calendar.DAY_OF_MONTH));
         dialog.setOnDismissListener(new OnDismissListener() {
 
             @Override
@@ -289,8 +311,8 @@ public class EditItemActivity extends Activity {
             final AlertDialog applyDialog = (AlertDialog) dialog;
             messageFormat = getString(R.string.edit_barcode_dialog_result);
             final BarcodeResult result = extras.getParcelable(EXTRA_RESULT);
-            applyDialog.setMessage(String.format(messageFormat,
-                    result.getName()));
+            applyDialog.setMessage(String.format(messageFormat, result
+                    .getName()));
             break;
         case DIALOG_PURCHASE_DATE:
         case DIALOG_WARRANTY_DATE:
@@ -353,9 +375,9 @@ public class EditItemActivity extends Activity {
         if (editItem) {
             getContentResolver().update(
                     ContentUris.withAppendedId(
-                            GaranboItemsProvider.CONTENT_URI_ITEMS,
-                            item.getLocalId()), item.toContentValues(), null,
-                    null);
+                            GaranboItemsProvider.CONTENT_URI_ITEMS, item
+                                    .getLocalId()), item.toContentValues(),
+                    null, null);
         } else {
             getContentResolver().insert(GaranboItemsProvider.CONTENT_URI_ITEMS,
                     item.toContentValues());
@@ -372,13 +394,64 @@ public class EditItemActivity extends Activity {
     @Override
     protected void onActivityResult(final int requestCode,
             final int resultCode, final Intent data) {
+        if (resultCode == RESULT_OK) {
+            switch (requestCode) {
+            case SELECT_PICTURE:
+                onSelectPictureResult(data);
+                break;
+            case IntentIntegrator.REQUEST_CODE:
+                onBarcodeResult(requestCode, resultCode, data);
+            }
+
+        }
+    }
+
+    private void onSelectPictureResult(final Intent data) {
+
+        Bitmap bMap = getBitmap(data);
+        try {
+            // save bitmap to ImageCache
+            ImageCache.saveImage(this, item.getLocalId(), bMap);
+            getContentResolver().notifyChange(
+                    ContentUris.withAppendedId(
+                            GaranboItemsProvider.CONTENT_URI_ITEMS, item
+                                    .getLocalId()), null);
+            // set haspicture in the database
+            // TODO: save has picture in the database.
+
+        } catch (IOException e) {
+            Log.e(TAG, "Error saving picture: " + e);
+        }
+    }
+
+    private Bitmap getBitmap(final Intent data) {
+        String selectedImagePath;
+        Uri selectedImageUri = data.getData();
+        selectedImagePath = getPath(selectedImageUri);
+        Bitmap bMap = BitmapFactory.decodeFile(selectedImagePath);
+        return bMap;
+    }
+
+    public String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        int column_index = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
+
+    private void onBarcodeResult(final int requestCode, final int resultCode,
+            final Intent data) {
         final IntentResult scanResult = IntentIntegrator.parseActivityResult(
                 requestCode, resultCode, data);
         if (scanResult != null) {
             final String contents = scanResult.getContents();
             final String formatName = scanResult.getFormatName();
             if (contents == null || formatName == null) {
-                Toast.makeText(this, R.string.scan_cancelled, Toast.LENGTH_LONG);
+                Toast
+                        .makeText(this, R.string.scan_cancelled,
+                                Toast.LENGTH_LONG);
             } else {
                 startParseBarcode(contents);
             }
