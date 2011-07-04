@@ -5,6 +5,12 @@ import java.util.Locale;
 
 final class ApiConstants {
 
+    /**
+     * Class contains only constants.
+     */
+    private ApiConstants() {
+    }
+
     public static final String BASE = "https://www.garanbo.de/rest/v1";
 
     public static final String KEY = "";
