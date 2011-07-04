@@ -1,3 +1,18 @@
+//
+// Copyright 2011 Thomas Gumprecht, Robert Jacob, Thomas Pieronczyk
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+//
 package net.sourcewalker.garanbot;
 
 import java.io.IOException;
@@ -17,14 +32,14 @@ import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
+import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.ContentUris;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.DialogInterface.OnDismissListener;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -133,8 +148,9 @@ public class EditItemActivity extends Activity {
             Intent intent = new Intent();
             intent.setType("image/*");
             intent.setAction(Intent.ACTION_GET_CONTENT);
-            startActivityForResult(Intent.createChooser(intent,
-                    "Select Picture"), SELECT_PICTURE);
+            startActivityForResult(
+                    Intent.createChooser(intent, "Select Picture"),
+                    SELECT_PICTURE);
 
         }
     };
@@ -239,17 +255,19 @@ public class EditItemActivity extends Activity {
             dialog = createProgressDialog();
             break;
         case DIALOG_CONFIRM_BARCODE:
-            dialog = new AlertDialog.Builder(this).setTitle(
-                    R.string.edit_barcode_dialog_title).setMessage(
-                    R.string.edit_barcode_dialog_confirm).setCancelable(false)
+            dialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.edit_barcode_dialog_title)
+                    .setMessage(R.string.edit_barcode_dialog_confirm)
+                    .setCancelable(false)
                     .setPositiveButton(android.R.string.yes,
                             new BarcodeConfirmListener(bundle))
                     .setNegativeButton(android.R.string.no, null).create();
             break;
         case DIALOG_RESULT_BARCODE:
-            dialog = new AlertDialog.Builder(this).setTitle(
-                    R.string.edit_barcode_dialog_title).setMessage(
-                    R.string.edit_barcode_dialog_result).setCancelable(false)
+            dialog = new AlertDialog.Builder(this)
+                    .setTitle(R.string.edit_barcode_dialog_title)
+                    .setMessage(R.string.edit_barcode_dialog_result)
+                    .setCancelable(false)
                     .setPositiveButton(android.R.string.yes,
                             new BarcodeApplyListener(bundle))
                     .setNegativeButton(android.R.string.no, null).create();
@@ -274,8 +292,8 @@ public class EditItemActivity extends Activity {
         final Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         final DatePickerDialog dialog = new DatePickerDialog(this, listener,
-                cal.get(Calendar.YEAR), cal.get(Calendar.MONDAY), cal
-                        .get(Calendar.DAY_OF_MONTH));
+                cal.get(Calendar.YEAR), cal.get(Calendar.MONDAY),
+                cal.get(Calendar.DAY_OF_MONTH));
         dialog.setOnDismissListener(new OnDismissListener() {
 
             @Override
@@ -311,8 +329,8 @@ public class EditItemActivity extends Activity {
             final AlertDialog applyDialog = (AlertDialog) dialog;
             messageFormat = getString(R.string.edit_barcode_dialog_result);
             final BarcodeResult result = extras.getParcelable(EXTRA_RESULT);
-            applyDialog.setMessage(String.format(messageFormat, result
-                    .getName()));
+            applyDialog.setMessage(String.format(messageFormat,
+                    result.getName()));
             break;
         case DIALOG_PURCHASE_DATE:
         case DIALOG_WARRANTY_DATE:
@@ -375,9 +393,9 @@ public class EditItemActivity extends Activity {
         if (editItem) {
             getContentResolver().update(
                     ContentUris.withAppendedId(
-                            GaranboItemsProvider.CONTENT_URI_ITEMS, item
-                                    .getLocalId()), item.toContentValues(),
-                    null, null);
+                            GaranboItemsProvider.CONTENT_URI_ITEMS,
+                            item.getLocalId()), item.toContentValues(), null,
+                    null);
         } else {
             getContentResolver().insert(GaranboItemsProvider.CONTENT_URI_ITEMS,
                     item.toContentValues());
@@ -446,9 +464,7 @@ public class EditItemActivity extends Activity {
             final String contents = scanResult.getContents();
             final String formatName = scanResult.getFormatName();
             if (contents == null || formatName == null) {
-                Toast
-                        .makeText(this, R.string.scan_cancelled,
-                                Toast.LENGTH_LONG);
+                Toast.makeText(this, R.string.scan_cancelled, Toast.LENGTH_LONG);
             } else {
                 startParseBarcode(contents);
             }
